@@ -1,0 +1,136 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.9~svn20110310	//
+ALL	Makefile	/^ALL := maxmat3.x maxmat3.dbg.x$/;"	m
+ASSIGNMAXMATCOMPLEMENT	procmaxmat.c	136;"	d	file:
+BIN_DIR	Makefile	/^BIN_DIR := $(CURDIR)$/;"	m
+CFLAGS	Makefile	/^CFLAGS=${DEFINECFLAGS} $(INCLUDEDIR)$/;"	m
+CHECKIFLOCATIONISVALID	findmaxmat.c	314;"	d	file:
+CHECKIFLOCATIONISVALID	findmaxmat.c	333;"	d	file:
+DEFAULTMINUNIQUEMATCHLEN	maxmatopt.c	34;"	d	file:
+Findmatchfunction	procmaxmat.c	/^typedef Sint (*Findmatchfunction)(Suffixtree *,$/;"	t	file:
+INCLUDEDIR	Makefile	/^INCLUDEDIR=-I${LIBBASEDIR} -I${LIBSTREEDIR}$/;"	m
+LD	Makefile	/^LD=$(CC)$/;"	m
+LDFLAGS	Makefile	/^LDFLAGS=${DEFINELDFLAGS}$/;"	m
+LIBBASE	Makefile	/^LIBBASE=$(LIBBASEDIR)\/libbase.a$/;"	m
+LIBBASEDBG	Makefile	/^LIBBASEDBG=$(LIBBASEDIR)\/libbase.dbg.a$/;"	m
+LIBBASEDIR	Makefile	/^LIBBASEDIR=..\/libbasedir$/;"	m
+LIBSTREE	Makefile	/^LIBSTREE=$(LIBSTREEDIR)\/libstree.a$/;"	m
+LIBSTREEDBG	Makefile	/^LIBSTREEDBG=$(LIBSTREEDIR)\/libstree.dbg.a$/;"	m
+LIBSTREEDIR	Makefile	/^LIBSTREEDIR=..\/streesrc$/;"	m
+MAXMATDEF_H	maxmatdef.h	12;"	d
+MAXNUMOFQUERYFILES	maxmatdef.h	38;"	d
+MMREPLACEMENTCHARQUERY	maxmatdef.h	32;"	d
+MMREPLACEMENTCHARSUBJECT	maxmatdef.h	31;"	d
+MMcallinfo	maxmatdef.h	/^} MMcallinfo;                   \/\/ \\Typedef{MMcallinfo}$/;"	t	typeref:struct:__anon5
+MUM3DBGOBJECTS	Makefile	/^MUM3DBGOBJECTS=maxmat3.dbg.o maxmatopt.dbg.o maxmatinp.dbg.o\\$/;"	m
+MUM3OBJECTS	Makefile	/^MUM3OBJECTS=maxmat3.o maxmatopt.o maxmatinp.o\\$/;"	m
+Matchprocessinfo	procmaxmat.c	/^} Matchprocessinfo;            \/\/ \\Typedef{Matchprocessinfo}$/;"	t	typeref:struct:__anon1	file:
+Maxmatchinfo	findmaxmat.c	/^} Maxmatchinfo;$/;"	t	typeref:struct:__anon4	file:
+NUMOFOPTIONS	maxmatopt.c	/^  NUMOFOPTIONS$/;"	e	enum:__anon2	file:
+Nodeinfo	findmaxmat.c	/^DECLAREARRAYSTRUCT(Nodeinfo);$/;"	v
+Nodeinfo	findmaxmat.c	/^} Nodeinfo;$/;"	t	typeref:struct:__anon3	file:
+OPTCOMPUTEBOTHDIRECTIONS	maxmatopt.c	/^  OPTCOMPUTEBOTHDIRECTIONS,$/;"	e	enum:__anon2	file:
+OPTFOURCOLUMN	maxmatopt.c	/^  OPTFOURCOLUMN,$/;"	e	enum:__anon2	file:
+OPTH	maxmatopt.c	/^  OPTH,$/;"	e	enum:__anon2	file:
+OPTHELP	maxmatopt.c	/^  OPTHELP,$/;"	e	enum:__anon2	file:
+OPTLEASTLENGTH	maxmatopt.c	/^  OPTLEASTLENGTH,$/;"	e	enum:__anon2	file:
+OPTMATCHNUCLEOTIDESONLY	maxmatopt.c	/^  OPTMATCHNUCLEOTIDESONLY,$/;"	e	enum:__anon2	file:
+OPTMAXMATCH	maxmatopt.c	/^  OPTMAXMATCH,$/;"	e	enum:__anon2	file:
+OPTMUM	maxmatopt.c	/^  OPTMUM = 0,$/;"	e	enum:__anon2	file:
+OPTMUMCAND	maxmatopt.c	/^  OPTMUMCAND,$/;"	e	enum:__anon2	file:
+OPTMUMREF	maxmatopt.c	/^  OPTMUMREF,$/;"	e	enum:__anon2	file:
+OPTONLYREVERSECOMPLEMENT	maxmatopt.c	/^  OPTONLYREVERSECOMPLEMENT,$/;"	e	enum:__anon2	file:
+OPTSHOWREVERSEPOSITIONS	maxmatopt.c	/^  OPTSHOWREVERSEPOSITIONS,$/;"	e	enum:__anon2	file:
+OPTSHOWSEQUENCELENGTHS	maxmatopt.c	/^  OPTSHOWSEQUENCELENGTHS,$/;"	e	enum:__anon2	file:
+OPTSHOWSTRING	maxmatopt.c	/^  OPTSHOWSTRING,$/;"	e	enum:__anon2	file:
+Optionnumber	maxmatopt.c	/^} Optionnumber;$/;"	t	typeref:enum:__anon2	file:
+PROCESSREALMUMS	procmaxmat.c	116;"	d	file:
+Processmatchfunction	maxmatdef.h	/^typedef Sint (*Processmatchfunction)$/;"	t
+SHOWBOOLEANVALUE	maxmat3.c	25;"	d	file:
+SPLINTALL	Makefile	/^SPLINTALL=maxmat3.splint maxmatopt.splint maxmatinp.splint\\$/;"	m
+SPLINTFLAGS	Makefile	/^SPLINTFLAGS=${INCLUDEDIR} -f ..\/Splintoptions -DDEBUG$/;"	m
+STORESTARTDESC	maxmatinp.c	37;"	d	file:
+VPATH	Makefile	/^VPATH := $(BIN_DIR)$/;"	m
+checkiflocationisMUMcand	findmumcand.c	/^static Sint checkiflocationisMUMcand (Location *loc,$/;"	f	file:
+checkquerycommonprefix	findmaxmat.c	/^static void checkquerycommonprefix(Maxmatchinfo *maxmatchinfo,$/;"	f	file:
+cmaxmatch	maxmatdef.h	/^       cmaxmatch,               \/\/ compute all maximal matches$/;"	m	struct:__anon5
+cmum	maxmatdef.h	/^       cmum;                    \/\/ compute real matches unique in both sequences$/;"	m	struct:__anon5
+cmum	procmaxmat.c	/^       cmum,                   \/\/ compute MUMs$/;"	m	struct:__anon1	file:
+cmumcand	maxmatdef.h	/^       cmumcand,                \/\/ compute reference-unique maximal matches$/;"	m	struct:__anon5
+cmumcand	procmaxmat.c	/^       cmumcand,               \/\/ compute MUM candidates$/;"	m	struct:__anon1	file:
+commondepthstack	findmaxmat.c	/^  ArrayNodeinfo commondepthstack; \/\/ stack to store depth values$/;"	m	struct:__anon4	file:
+createTable	findmaxmat.c	/^static void createTable(Suffixtree *stree, sparsetable<Uint*> &table, Uint wordsize) $/;"	f	file:
+currentisrcmatch	procmaxmat.c	/^       currentisrcmatch;       \/\/ true iff currently rc-matches are computed$/;"	m	struct:__anon1	file:
+currentquerylen	procmaxmat.c	/^       currentquerylen;        \/\/ length of the current query sequence$/;"	m	struct:__anon1	file:
+depthofpreviousmaxloc	findmaxmat.c	/^       depthofpreviousmaxloc;     \/\/ the depth of the previous maxloc$/;"	m	struct:__anon4	file:
+encoding	findmaxmat.c	/^Uint encoding(Uchar *example, Uint wordsize) $/;"	f
+enumeratemaxmatches	findmaxmat.c	/^static Sint enumeratemaxmatches (Maxmatchinfo *maxmatchinfo,$/;"	f	file:
+findmaxmatches	findmaxmat.c	/^Sint findmaxmatches(Suffixtree *stree,$/;"	f
+findmaxmatchesonbothstrands	procmaxmat.c	/^static Sint findmaxmatchesonbothstrands(void *info,Uint seqnum,$/;"	f	file:
+findmumcandidates	findmumcand.c	/^Sint findmumcandidates(Suffixtree *stree,$/;"	f
+forward	maxmatdef.h	/^       forward,                 \/\/ compute matches on forward strand$/;"	m	struct:__anon5
+forward	procmaxmat.c	/^       forward,                \/\/ compute forward matches$/;"	m	struct:__anon1	file:
+fourcolumn	maxmatdef.h	/^       fourcolumn,              \/\/ always use 4 column format$/;"	m	struct:__anon5
+fourcolumn	procmaxmat.c	/^       fourcolumn,             \/\/ is option \\texttt{-F} on?$/;"	m	struct:__anon1	file:
+getEdgelength	findmaxmat.c	/^Uint getEdgelength(Uchar *left,Uchar *right)$/;"	f
+getmaxdesclen	procmaxmat.c	/^static Sint getmaxdesclen(Multiseq *multiseq)$/;"	f	file:
+getmaxmatinput	maxmatinp.c	/^Sint getmaxmatinput (Multiseq *subjectmultiseq,$/;"	f
+inheritfrompath	findmaxmat.c	/^static void inheritfrompath(ArrayPathinfo *matchpath,Location *maxloc,$/;"	f	file:
+lcp	findmaxmat.c	/^static Uint lcp(Uchar *start1,Uchar *end1,Uchar *start2,Uchar *end2)$/;"	f	file:
+main	maxmat3.c	/^int main(int argc, char *argv[])$/;"	f
+makeleastlengthtext	maxmatopt.c	/^static void makeleastlengthtext(char *spacefortext)$/;"	f	file:
+matchnucleotidesonly	maxmatdef.h	/^       matchnucleotidesonly,    \/\/ match ONLY acgt's$/;"	m	struct:__anon5
+matchpath	findmaxmat.c	/^  ArrayPathinfo matchpath;        \/\/ path of br. nodes from ploc to maxloc$/;"	m	struct:__anon4	file:
+maxdesclength	procmaxmat.c	/^       maxdesclength,          \/\/ maximum length of a description$/;"	m	struct:__anon1	file:
+maxloc	findmaxmat.c	/^  Location maxloc;                \/\/ location of \\texttt{pmax}$/;"	m	struct:__anon4	file:
+minmatchlength	findmaxmat.c	/^       minmatchlength,            \/\/ min length of a match to be reported$/;"	m	struct:__anon4	file:
+minmatchlength	maxmatdef.h	/^  Uint minmatchlength,          \/\/ minimal length of a match to be reported$/;"	m	struct:__anon5
+minmatchlength	procmaxmat.c	/^  Uint minmatchlength,         \/\/ minimum length of a match$/;"	m	struct:__anon1	file:
+mumcandtab	procmaxmat.c	/^  ArrayMUMcandidate mumcandtab;\/\/ a table containing MUM-candidates$/;"	m	struct:__anon1	file:
+numofqueryfiles	maxmatdef.h	/^       numofqueryfiles;         \/\/ number of query files$/;"	m	struct:__anon5
+onmaxpath	findmaxmat.c	/^  BOOL onmaxpath;$/;"	m	struct:__anon3	file:
+parsemaxmatoptions	maxmatopt.c	/^Sint parsemaxmatoptions(MMcallinfo *mmcallinfo,int argc, char *argv[])$/;"	f
+processbranch1	findmaxmat.c	/^static BOOL processbranch1(Bref nodeptr,void *info)$/;"	f	file:
+processbranch2	findmaxmat.c	/^static Sint processbranch2(\/*@unused@*\/ Bref nodeptr,void *info)$/;"	f	file:
+processinfo	findmaxmat.c	/^  void *processinfo;            \/\/ first arg. when calling previous function$/;"	m	struct:__anon4	file:
+processleaf	findmaxmat.c	/^static Sint processleaf(Uint leafindex,\/*@unused@*\/ Bref lcpnode,void *info)$/;"	f	file:
+processmatch	findmaxmat.c	/^  Processmatchfunction processmatch; \/\/ this function processes found match$/;"	m	struct:__anon4	file:
+procmaxmatches	procmaxmat.c	/^Sint procmaxmatches(MMcallinfo *mmcallinfo,Multiseq *subjectmultiseq)$/;"	f
+program	maxmatdef.h	/^  char program[PATH_MAX+1],     \/\/ the path of the program$/;"	m	struct:__anon5
+query	findmaxmat.c	/^  Uchar *query,                   \/\/ the query string$/;"	m	struct:__anon4	file:
+querycommondepth	findmaxmat.c	/^  Uint querycommondepth;$/;"	m	struct:__anon3	file:
+queryfilelist	maxmatdef.h	/^       queryfilelist[MAXNUMOFQUERYFILES][PATH_MAX+1]; $/;"	m	struct:__anon5
+querylen	findmaxmat.c	/^  Uint querylen,                  \/\/ length of the current query$/;"	m	struct:__anon4	file:
+querymultiseq	procmaxmat.c	/^           querymultiseq;      \/\/ the Multiseq record of the queries$/;"	m	struct:__anon1	file:
+queryseqnum	findmaxmat.c	/^       queryseqnum,               \/\/ number of query sequence$/;"	m	struct:__anon4	file:
+querysuffix	findmaxmat.c	/^        *querysuffix;             \/\/ current suffix of query$/;"	m	struct:__anon4	file:
+reversecomplement	maxmatdef.h	/^       reversecomplement,       \/\/ compute matches on reverse strand$/;"	m	struct:__anon5
+reversecomplement	procmaxmat.c	/^       reversecomplement,      \/\/ compute reverse complement matches$/;"	m	struct:__anon1	file:
+scanmultiplefastafile	maxmatinp.c	/^Sint scanmultiplefastafile (Multiseq *multiseq,$/;"	f
+showgreedymatchresult	findmaxmat.c	/^static void showgreedymatchresult(Maxmatchinfo *maxmatchinfo,$/;"	f	file:
+showmaximalmatch	procmaxmat.c	/^static Sint showmaximalmatch (void *info,$/;"	f	file:
+showmaxmatflags	maxmat3.c	/^static void showmaxmatflags (char *program,$/;"	f	file:
+showreversepositions	maxmatdef.h	/^       showreversepositions,    \/\/ give reverse pos. rel. to orig. string$/;"	m	struct:__anon5
+showreversepositions	procmaxmat.c	/^       showreversepositions,   \/\/ is option \\texttt{-c} on?$/;"	m	struct:__anon1	file:
+showseqandmaximalmatch	procmaxmat.c	/^static Sint showseqandmaximalmatch (void *info,$/;"	f	file:
+showsequencedescription	procmaxmat.c	/^static void showsequencedescription(Multiseq *multiseq, Uint maxdesclength,$/;"	f	file:
+showsequenceheader	procmaxmat.c	/^static void showsequenceheader(Multiseq *multiseq,$/;"	f	file:
+showsequencelengths	maxmatdef.h	/^       showsequencelengths,     \/\/ show length of sequences on header line$/;"	m	struct:__anon5
+showsequencelengths	procmaxmat.c	/^       showsequencelengths,    \/\/ is option \\texttt{-L} on?$/;"	m	struct:__anon1	file:
+showstring	maxmatdef.h	/^  BOOL showstring,              \/\/ show the matching string$/;"	m	struct:__anon5
+showstring	procmaxmat.c	/^  BOOL showstring,             \/\/ is option \\texttt{-s} on?$/;"	m	struct:__anon1	file:
+showusage	maxmatopt.c	/^static void showusage(char *program,OptionDescription *options,$/;"	f	file:
+sparsetable	findmaxmat.c	/^using google::sparsetable;$/;"	m	class:google	file:
+splitsubstreeH	findmaxmat.c	/^static void splitsubstreeH(Suffixtree *stree, sparsetable<Uint*> &table, Uchar *buffer,Uint *btptr, Uint wordsize)$/;"	f	file:
+std	findmaxmat.c	/^using namespace std;$/;"	v
+std	maxmat3.c	/^using namespace std;$/;"	v
+storeMUMcandidate	procmaxmat.c	/^static Sint storeMUMcandidate (void *info,$/;"	f	file:
+stree	findmaxmat.c	/^  Suffixtree *stree;              \/\/ reference to suffix tree of subject-seq$/;"	m	struct:__anon4	file:
+stree	procmaxmat.c	/^  Suffixtree stree;            \/\/ the suffix tree of the subject-sequence$/;"	m	struct:__anon1	file:
+subjectfile	maxmatdef.h	/^       subjectfile[PATH_MAX+1], \/\/ filename of the subject-sequence$/;"	m	struct:__anon5
+subjectmultiseq	procmaxmat.c	/^  Multiseq *subjectmultiseq,   \/\/ reference to multiseq of subject$/;"	m	struct:__anon1	file:
+wccSequence	procmaxmat.c	/^static void wccSequence (Uchar *seq,$/;"	f	file:

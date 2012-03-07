@@ -12,6 +12,13 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
+#include <google/sparsetable>
+#include <string>
+#include <bitset>
+#include <iostream>
+#include <mpi.h>
+#include <math.h>
+#include <cstring>
 #include "types.h"
 #include "debugdef.h"
 #include "errordef.h"
@@ -19,7 +26,11 @@
 #include "spacedef.h"
 #include "streedef.h"
 #include "maxmatdef.h"
+#include "streehuge.h"
+#include "streeacc.h"
 
+using google::sparsetable;
+using namespace std;
 //}
 
 /*EE
@@ -55,6 +66,169 @@ typedef struct
 } Matchprocessinfo;            // \Typedef{Matchprocessinfo}
 
 //\IgnoreLatex{
+
+Uint getEdgelength(Uchar *left,Uchar *right)
+{
+    return (Uint)(right-left+1);
+}
+
+Uint encoding(Uchar *example, Uint wordsize) 
+{
+    const int len=3*wordsize;
+    string binary;
+    for (int i=0, j=len-1; i<wordsize; i++, j-=3) 
+    {
+        switch (*(example+i))
+        {
+            case 'A':
+                binary.append("100");
+                break;
+            case 'a': 
+                binary.append("100");
+                break;
+            case 'C':
+                binary.append("101");
+                break;
+            case 'c':
+                binary.append("101");
+                break;
+            case 'G':
+                binary.append("110");
+                break;
+            case 'g':
+                binary.append("110");
+                break;
+            case 'T':
+                binary.append("111");
+                break;
+            case 't':
+                binary.append("111");
+                break;
+        }
+   } 
+   bitset<32> number(binary);
+   return (Uint) number.to_ulong();
+}
+
+/* 
+ * ===  FUNCTION  ======================================================================
+ *         Name:  splitsubstreeH
+ *  Description:  Traverse every branch of suffix tree and it stops when it
+ *  reaches the max characters to save in table.
+ * =====================================================================================
+ */
+static void splitsubstreeH(Suffixtree *stree, sparsetable<Uint*> &table, Uchar *buffer,Uint *btptr, Uint wordsize)
+{
+  Uint *largeptr, *succptr, leafindex, succdepth, edgelen, succ, distance, 
+       depth, headposition;
+  SYMBOL *leftpointer;
+  int i;
+  
+  size_t size = strlen((const char*)buffer);
+  if (size>wordsize) 
+  {
+      cout << size << " no ir mas abajo" << endl;
+      return;
+  } 
+
+  GETBOTH(depth,headposition,btptr);
+  succ = GETCHILD(btptr);
+  do 
+  {
+    if(ISLEAF(succ))
+    {
+      leafindex = GETLEAFINDEX(succ);
+      leftpointer = stree->text + depth + leafindex;
+      SYMBOL *ptr;
+      if ((size+getEdgelength(leftpointer,stree->sentinel))>wordsize)
+          table[encoding(buffer,wordsize)]=btptr;
+      else
+      {
+          for (i=0, ptr=leftpointer; ptr<=stree->sentinel; ptr++, i++)
+          {
+              if (ptr == stree->sentinel) 
+              {
+                 buffer[size+i]='\0';
+                 break;
+              }
+              buffer[size+i]=*ptr;
+          }
+          table[encoding(buffer,wordsize)]=(Uint*)succ;
+      }
+      succ = LEAFBROTHERVAL(stree->leaftab[leafindex]);
+     } else
+     {
+      succptr = stree->branchtab + GETBRANCHINDEX(succ);
+      GETBOTH(succdepth,headposition,succptr);
+      leftpointer = stree->text + depth + headposition;
+      edgelen = succdepth - depth;
+      SYMBOL *ptr, *end;
+      end=leftpointer + edgelen - 1;
+      if ((size+edgelen)<wordsize)
+      {
+          for (i=0, ptr=leftpointer; i<edgelen; ptr++, i++)
+              buffer[size+i]=*ptr;
+          buffer[size+i]='\0';
+          splitsubstreeH(stree,table,buffer,succptr,wordsize);
+      }
+      table[encoding(buffer,wordsize)]=btptr;
+      succ = GETBROTHER(succptr);
+    }  
+   } while(!NILPTR(succ));
+} 
+
+static void createTable(Suffixtree *stree, sparsetable<Uint*> &table, Uint wordsize) 
+{ 
+    Uint *largeptr, *btptr, *succptr, *rcptr, i, succdepth, distance, 
+         nodeaddress, succ, depth, child, brother, headposition, suffixlink;
+    Uint leafindex, edgelen;
+    Uchar *leftpointer, *buffer;
+    buffer = (Uchar *)malloc(sizeof(Uchar *)*wordsize);
+    for(rcptr = stree->rootchildren; 
+        rcptr <= stree->rootchildren + LARGESTCHARINDEX;rcptr++)
+    { 
+        if(*rcptr != UNDEFINEDREFERENCE)
+         {
+             if (ISLEAF(*rcptr))
+                 continue;
+             else
+             {
+                 buffer[0]=(Uchar) (rcptr - stree->rootchildren);
+                 buffer[1]='\0';
+                 btptr = stree->branchtab + GETBRANCHINDEX(*rcptr);
+                 switch(buffer[0])
+                 {
+                     case 'a':
+                         splitsubstreeH(stree,table,buffer,btptr,wordsize);
+                         break;
+                     case 'A':
+                         splitsubstreeH(stree,table,buffer,btptr,wordsize);
+                         break;
+                     case 'c':
+                         splitsubstreeH(stree,table,buffer,btptr,wordsize);
+                         break;
+                     case 'C':
+                         splitsubstreeH(stree,table,buffer,btptr,wordsize);
+                         break;
+                     case 'g':
+                         splitsubstreeH(stree,table,buffer,btptr,wordsize);
+                         break;
+                     case 'G':
+                         splitsubstreeH(stree,table,buffer,btptr,wordsize);
+                         break;
+                     case 't':
+                         splitsubstreeH(stree,table,buffer,btptr,wordsize);
+                         break;
+                     case 'T':
+                         splitsubstreeH(stree,table,buffer,btptr,wordsize);
+                         break;
+                     default:
+                         break;
+                 }
+             }
+         }
+     }
+}
 
 /*
   The following is the type for the functions to finding maximal matches or
@@ -514,6 +688,16 @@ Sint procmaxmatches(MMcallinfo *mmcallinfo,Multiseq *subjectmultiseq)
   fprintf(stderr,"# CONSTRUCTIONTIME %s %s %.2f\n",
          &mmcallinfo->program[0],&mmcallinfo->subjectfile[0],
          getruntime());
+  Uint wordsize=10;
+  Uint size = pow(2,3*wordsize);
+  if (size>pow(2,32))
+      return -1;
+  double start, finish;
+  start = MPI::Wtime();
+  sparsetable<Uint*> table(size);
+  createTable(&matchprocessinfo.stree,table,wordsize);
+  finish = MPI::Wtime();
+  cerr << "createTable Time: " << finish-start << endl;
   matchprocessinfo.subjectmultiseq = subjectmultiseq;
   matchprocessinfo.minmatchlength = mmcallinfo->minmatchlength;
   matchprocessinfo.showstring = mmcallinfo->showstring;

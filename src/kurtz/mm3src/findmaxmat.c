@@ -10,13 +10,6 @@
 
 #include <stdio.h>
 #include <ctype.h>
-#include <math.h>
-#include <cstring>
-#include <google/sparsetable>
-#include <string>
-#include <bitset>
-#include <iostream>
-#include <mpi.h>
 #include "streedef.h"
 #include "debugdef.h"
 #include "spacedef.h"
@@ -25,11 +18,7 @@
 #include "intbits.h"
 #include "visible.h"
 #include "streedef.h"
-#include "streehuge.h"
-#include "streeacc.h"
 
-using google::sparsetable;
-using namespace std;
 //}
 
 /*EE
@@ -110,145 +99,7 @@ typedef struct
 } Maxmatchinfo;
 
 //\IgnoreLatex{
-Uint getEdgelength(Uchar *left,Uchar *right)
-{
-    return (Uint)(right-left+1);
-}
 
-Uint encoding(Uchar *example, Uint wordsize) 
-{
-    const int len=3*wordsize;
-    string binary;
-    for (int i=0, j=len-1; i<wordsize; i++, j-=3) 
-    {
-        switch (*(example+i))
-        {
-            case 'A':
-                binary.append("100");
-                break;
-            case 'a': 
-                binary.append("100");
-                break;
-            case 'C':
-                binary.append("101");
-                break;
-            case 'c':
-                binary.append("101");
-                break;
-            case 'G':
-                binary.append("110");
-                break;
-            case 'g':
-                binary.append("110");
-                break;
-            case 'T':
-                binary.append("111");
-                break;
-            case 't':
-                binary.append("111");
-                break;
-        }
-   } 
-   bitset<32> number(binary);
-   if (number.to_ulong() > pow(2,32))
-       cerr << "Ya la caguÃ©" << endl;
-   return (Uint) number.to_ulong();
-}
-
-/* 
- * ===  FUNCTION  ======================================================================
- *         Name:  splitsubstreeH
- *  Description:  Traverse every branch of suffix tree and it stops when it
- *  reaches the max characters to save in table.
- * =====================================================================================
- */
-static void splitsubstreeH(Suffixtree *stree, sparsetable<Uint*> &table, Uchar *buffer,Uint *btptr, Uint wordsize)
-{
-  Uint *largeptr, *succptr, leafindex, succdepth, edgelen, succ, distance, 
-       depth, headposition;
-  SYMBOL *leftpointer;
-  int i;
-  
-  size_t size = strlen((const char*)buffer);
-  if (size>wordsize) 
-  {
-      cout << size << " no ir mas abajo" << endl;
-      return;
-  }
-  GETBOTH(depth,headposition,btptr);
-  succ = GETCHILD(btptr);
-  do 
-  {
-    if(ISLEAF(succ))
-    {
-      leafindex = GETLEAFINDEX(succ);
-      leftpointer = stree->text + depth + leafindex;
-      SYMBOL *ptr;
-      if ((size+getEdgelength(leftpointer,stree->sentinel))>wordsize)
-      {
-          table[encoding(buffer,wordsize)]=btptr;
-      }
-      else
-      {
-          for (i=0, ptr=leftpointer; ptr<=stree->sentinel; ptr++, i++)
-          {
-              if (ptr == stree->sentinel) 
-              {
-                 buffer[size+i]='\0';
-                 break;
-              }
-              buffer[size+i]=*ptr;
-          }
-          table[encoding(buffer,wordsize)]=(Uint*)succ;
-      }
-      succ = LEAFBROTHERVAL(stree->leaftab[leafindex]);
-     } else
-     {
-      succptr = stree->branchtab + GETBRANCHINDEX(succ);
-      GETBOTH(succdepth,headposition,succptr);
-      leftpointer = stree->text + depth + headposition;
-      edgelen = succdepth - depth;
-      SYMBOL *ptr, *end;
-      end=leftpointer + edgelen - 1;
-      if ((size+edgelen)<wordsize)
-      {
-          for (i=0, ptr=leftpointer; i<edgelen; ptr++, i++)
-              buffer[size+i]=*ptr;
-          buffer[size+i]='\0';
-      }
-      if (std::strlen((const char*)buffer) > (size_t) wordsize) 
-          table[encoding(buffer,wordsize)]=btptr;
-      else
-          splitsubstreeH(stree,table,buffer,succptr,wordsize);
-      succ = GETBROTHER(succptr);
-    }  
-   } while(!NILPTR(succ));
-} 
-
-static void createTable(Suffixtree *stree, sparsetable<Uint*> &table, Uint wordsize) 
-{ 
-    Uint *largeptr, *btptr, *succptr, *rcptr, i, succdepth, distance, 
-         nodeaddress, succ, depth, child, brother, headposition, suffixlink;
-    Uint leafindex, edgelen;
-    Uchar *leftpointer, *buffer;
-    buffer = (Uchar *)malloc(sizeof(Uchar *)*wordsize);
-    for(rcptr = stree->rootchildren; 
-        rcptr <= stree->rootchildren + LARGESTCHARINDEX;rcptr++)
-    { 
-        if(*rcptr != UNDEFINEDREFERENCE)
-         {
-             if (ISLEAF(*rcptr))
-                 continue;
-             else
-             {
-                 buffer[0]=(Uchar) (rcptr - stree->rootchildren);
-                 buffer[1]='\0';
-                 btptr = stree->branchtab + GETBRANCHINDEX(*rcptr);
-                 splitsubstreeH(stree,table,buffer,btptr,wordsize);
-             }
-         }
-     }
-}
 #ifdef DEBUG
 static Uint lcp(Uchar *start1,Uchar *end1,Uchar *start2,Uchar *end2)
 {
@@ -620,16 +471,6 @@ Sint findmaxmatches(Suffixtree *stree,
   Uchar *querysubstringend;  // ref to end of querysubs. of len. minmatchl.
   Location ploc;
   Maxmatchinfo maxmatchinfo;
-  Uint wordsize=10;
-  Uint size = pow(2,3*wordsize);
-  if (size>pow(2,32))
-      return -1;
-  double start, finish;
-  start = MPI::Wtime();
-  sparsetable<Uint*> table(size);
-  createTable(stree,table,wordsize);
-  finish = MPI::Wtime();
-  cerr << "createTable Time: " << finish-start << endl;
   DEBUG1(2,"query of length %lu=",(Showuint) querylen);
   DEBUGCODE(2,(void) fwrite(query,sizeof(Uchar),(size_t) querylen,stdout));
   DEBUG0(2,"\n");

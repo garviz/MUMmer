@@ -55,6 +55,7 @@ typedef struct
        cmumcand,                // compute reference-unique maximal matches
        cmum;                    // compute real matches unique in both sequences
   Uint minmatchlength,          // minimal length of a match to be reported
+       wordsize,                // Word size of the Direct access table
        numofqueryfiles;         // number of query files
   char program[PATH_MAX+1],     // the path of the program
        subjectfile[PATH_MAX+1], // filename of the subject-sequence

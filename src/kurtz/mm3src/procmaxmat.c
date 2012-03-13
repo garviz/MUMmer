@@ -1494,7 +1494,7 @@ Sint procmaxmatches(MMcallinfo *mmcallinfo,Multiseq *subjectmultiseq)
   fprintf(stderr,"# CONSTRUCTIONTIME %s %s %.2f\n",
          &mmcallinfo->program[0],&mmcallinfo->subjectfile[0],
          getruntime());
-  Uint wordsize=10;
+  Uint wordsize=mmcallinfo->wordsize;
   Uint size = pow(2,3*wordsize);
   if (size>pow(2,32))
       return -1;

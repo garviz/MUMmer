@@ -8,5 +8,5 @@
 # makefiles.
 
 CC=mpic++
-DEFINECFLAGS= -Wno-write-strings -Wall -Werror -O3 
+DEFINECFLAGS= -Wno-write-strings -Wall -Werror -m64 -O3 
 DEFINELDFLAGS=

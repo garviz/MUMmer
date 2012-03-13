@@ -53,6 +53,7 @@ typedef enum
   OPTSHOWREVERSEPOSITIONS,
   OPTFOURCOLUMN,
   OPTSHOWSEQUENCELENGTHS,
+  OPTTABLE,
   OPTH,
   OPTHELP,
   NUMOFOPTIONS
@@ -133,6 +134,7 @@ Sint parsemaxmatoptions(MMcallinfo *mmcallinfo,int argc, char *argv[])
 	    "reference sequence inputs");
   ADDOPTION(OPTSHOWSEQUENCELENGTHS,"-L",
             "show the length of the query sequences on the header line");
+  ADDOPTION(OPTTABLE,"-T","size of the word to store in Direct access table");
   ADDOPTION(OPTH,"-h",
 	    "show possible options");
   ADDOPTION(OPTHELP,"-help",
@@ -212,6 +214,22 @@ Sint parsemaxmatoptions(MMcallinfo *mmcallinfo,int argc, char *argv[])
         break;
       case OPTMUM:
         mmcallinfo->cmum = True;
+        break;
+      case OPTTABLE:
+        argnum++;
+        if(argnum > (Uint) (argc-2))
+        {
+          ERROR1("missing argument for option %s",
+                  options[OPTTABLE].optname);
+          return -2;
+        }
+        if(sscanf(argv[argnum],"%ld",&readint) != 1 || readint <= 0)
+        {
+          ERROR2("argument %s for option %s is not a positive integer",
+                  argv[argnum],options[OPTTABLE].optname);
+          return -3;
+        }
+        mmcallinfo->wordsize = (Uint) readint;
         break;
       case OPTH:
       case OPTHELP:

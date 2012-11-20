@@ -10,6 +10,7 @@
 
 #include <stdio.h>
 #include <ctype.h>
+#include <omp.h>
 #include "streedef.h"
 #include "debugdef.h"
 #include "spacedef.h"
@@ -151,6 +152,15 @@ Sint findmumcandidates(Suffixtree *stree,
         *right = query + querylen - 1, 
         *querysuffix;
   Location loc;
+  double start, end;
+  int i, nthreads, *chunk_schd;
+  omp_sched_t *schedule;
+  Uint N = 0, Size = 32768;
+
+  chunk_schd = (int *) malloc(sizeof(int));
+  schedule = (omp_sched_t *) malloc(sizeof(omp_sched_t));
+
+  start = omp_get_wtime();
 
   DEBUG1(2,"query of length %lu=",(Showuint) querylen);
   DEBUGCODE(2,(void) fwrite(query,sizeof(Uchar),(size_t) querylen,stdout));
@@ -198,5 +208,7 @@ Sint findmumcandidates(Suffixtree *stree,
     querysuffix++;
     DEBUGCODE(2,showlocation(stdout,stree,&loc));
   }
+  end = omp_get_wtime();
+  fprintf(stderr,"# OMP_time=%f\n", (double) (end-start));
   return 0;
 }

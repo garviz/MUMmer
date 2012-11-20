@@ -86,8 +86,6 @@ Sint procmaxmatches(MMcallinfo *mmcallinfo,
   This is the main function.
 */
 
-using namespace std;
-
 int main(int argc, char **argv)
 {
   Sint retcode;
@@ -96,42 +94,31 @@ int main(int argc, char **argv)
     int numprocs, rank, namelen;
     double start, finish;
 
-    MPI::Init(argc, argv);
-    numprocs = MPI::COMM_WORLD.Get_size();
-    rank = MPI::COMM_WORLD.Get_rank();
-
   DEBUGLEVELSET;
   initclock();
   retcode = parsemaxmatoptions (&mmcallinfo, argc, argv);
   if (retcode < 0)
   {
         fprintf(stderr,"%s: %s\n",argv[0],messagespace());
-        MPI::Finalize();
         return EXIT_FAILURE;
   }
   if (retcode == 1)   // program was called with option -help
   {
     checkspaceleak ();
     mmcheckspaceleak ();
-    MPI::Finalize();
     return EXIT_SUCCESS;
   }
   DEBUGCODE(1,showmaxmatflags (argv[0], &mmcallinfo));
-    if (rank == 0) 
-    {
-        start = MPI::Wtime();
   if (getmaxmatinput (&subjectmultiseq,
                       mmcallinfo.matchnucleotidesonly,
                       &mmcallinfo.subjectfile[0]) != 0)
   {
         fprintf(stderr,"%s: %s\n",argv[0],messagespace());
-        MPI::Finalize();
         return EXIT_FAILURE;
   }
   if(procmaxmatches(&mmcallinfo,&subjectmultiseq) != 0)
   {
         fprintf(stderr,"%s: %s\n",argv[0],messagespace());
-        MPI::Finalize();
         return EXIT_FAILURE;
   }
   freemultiseq (&subjectmultiseq);
@@ -143,11 +130,6 @@ int main(int argc, char **argv)
   fprintf(stderr,"# SPACE %s %s %.2f\n",argv[0],
          &mmcallinfo.subjectfile[0],
          MEGABYTES(getspacepeak()+mmgetspacepeak()));
-        cerr << "Toci application for genome alignment under HPC environments" << endl;
-        finish = MPI::Wtime();
-    }
-    MPI_Finalize();
-    cerr << "Final Time: " << finish-start << endl;
   return EXIT_SUCCESS;
 }
 

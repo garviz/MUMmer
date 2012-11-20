@@ -35,15 +35,15 @@ SCRIPT_DIR    := $(TOP_DIR)/scripts
 TIGR_SRC_DIR  := $(TOP_DIR)/src/tigr
 KURTZ_SRC_DIR := $(TOP_DIR)/src/kurtz
 
-CC   := $(filter /%,$(shell /bin/sh -c 'type g++'))
+CC   := $(filter /%,$(shell /bin/sh -c 'type gcc'))
 CXX  := $(filter /%,$(shell /bin/sh -c 'type g++'))
 SED  := $(filter /%,$(shell /bin/sh -c 'type sed'))
 CSH  := $(filter /%,$(shell /bin/sh -c 'type csh'))
 PERL := $(filter /%,$(shell /bin/sh -c 'type perl'))
 AR   := $(filter /%,$(shell /bin/sh -c 'type ar'))
 
-CXXFLAGS = -O3 -Wno-write-strings
-CFLAGS = -O3 -Wno-write-strings
+CXXFLAGS = -O3 -Wno-write-strings -fopenmp
+CFLAGS = -O3 -Wno-write-strings -fopenmp -lm
 LDFLAGS  =
 
 FLATS = ACKNOWLEDGEMENTS COPYRIGHT INSTALL LICENSE Makefile README ChangeLog

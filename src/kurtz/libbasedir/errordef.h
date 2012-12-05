@@ -105,7 +105,6 @@ Sint maxerrormsg(void);
 
 #define STANDARDMESSAGE\
         fprintf(stderr,"%s: %s\n",argv[0],messagespace());\
-        MPI::Finalize();\
         return EXIT_FAILURE
 
 #define SIMPLESTANDARDMESSAGE\

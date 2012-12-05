@@ -7,6 +7,6 @@
 # This files contains some basic definitions to be included in the
 # makefiles.
 
-CC=mpic++
-DEFINECFLAGS= -Wno-write-strings -Wall -Werror -m64 -O3 
+CC=gcc
+DEFINECFLAGS=-Wall -Werror -O3
 DEFINELDFLAGS=

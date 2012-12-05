@@ -1046,12 +1046,12 @@ void freestree(Suffixtree *stree)
         Uint j = 0, step, nextstep;\
         stree->nonmaximal = NULL;\
         step = textlen/NUMOFCALLS;\
-        nextstep = (textlen >= LEASTSHOWPROGRESS) ? step : (textlen+1);\
-        if(progress == NULL && textlen >= LEASTSHOWPROGRESS)\
+        nextstep = (textlen >= LEASTSHOWPROGRESS) ? step : (textlen+1);
+        /*if(progress == NULL && textlen >= LEASTSHOWPROGRESS)\
         {\
           fprintf(stderr,"# process %lu characters per dot\n",\
                  (Showuint) textlen/NUMOFCALLS);\
-        }
+        }*/
 
 #define COMPLETELARGEFIRST  completelarge(stree)
 #define COMPLETELARGESECOND completelarge(stree)

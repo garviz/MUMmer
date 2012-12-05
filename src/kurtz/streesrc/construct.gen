@@ -18,7 +18,7 @@ CONSTRUCT
   while(stree->tailptr < stree->sentinel || 
         stree->headnodedepth != 0 || stree->headend != NULL)
   {
-    CHECKSTEP;
+    //CHECKSTEP;
     // case (1): headloc is root
     if(stree->headnodedepth == 0 && stree->headend == NULL) 
     {
@@ -124,6 +124,6 @@ CONSTRUCT
   DEBUGCODE(1,checkstree(stree));
 
 //}
-  FINALPROGRESS;
+  //FINALPROGRESS;
   return 0;
 }

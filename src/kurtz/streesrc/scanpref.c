@@ -35,6 +35,8 @@ static Uint lcp(SYMBOL *start1,SYMBOL *end1,SYMBOL *start2,SYMBOL *end2)
        edgelen, remainingtoskip;
   SYMBOL *lptr, *leftborder = (SYMBOL *) NULL, firstchar, edgechar = 0;
 
+  DEBUG1(4,"scanprefixfromnodestree starts at node %lu\n",
+          (Showuint) BRADDR2NUM(stree,btptr));
   lptr = left;
   nodeptr = btptr;
   if(nodeptr == stree->branchtab)

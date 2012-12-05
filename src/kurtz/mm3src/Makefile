@@ -1,7 +1,7 @@
 #-- Imported variables from top level makefile
 # BIN_DIR AUX_BIN_DIR CXX CC CFLAGS CXXFLAGS LDFLAGS
 
-include ../Makedef
+##include ../Makedef
 
 ifndef BIN_DIR
 BIN_DIR := $(CURDIR)
@@ -15,9 +15,9 @@ LIBBASEDIR=../libbasedir
 LIBSTREEDIR=../streesrc
 INCLUDEDIR=-I${LIBBASEDIR} -I${LIBSTREEDIR}
 
-override CFLAGS+= -Wno-write-strings $(INCLUDEDIR)
-CFLAGS= ${DEFINECFLAGS} $(INCLUDEDIR) 
-LDFLAGS=${DEFINELDFLAGS}
+override CFLAGS+=$(INCLUDEDIR)
+##CFLAGS=${DEFINECFLAGS} $(INCLUDEDIR)
+##LDFLAGS=${DEFINELDFLAGS}
 SPLINTFLAGS=${INCLUDEDIR} -f ../Splintoptions -DDEBUG
 LD=$(CC)
 
@@ -40,7 +40,7 @@ SPLINTALL=maxmat3.splint maxmatopt.splint maxmatinp.splint\
 all: $(ALL)
 
 mummer: $(MUM3OBJECTS) $(LIBSTREE)
-	$(LD) $(LDFLAGS) $(MUM3OBJECTS) $(LIBSTREE) $(LIBBASE) \
+	$(LD) $(CFLAGS) $(LDFLAGS) $(MUM3OBJECTS) $(LIBSTREE) $(LIBBASE) \
 	-o $(BIN_DIR)/$@; chmod 755 $(BIN_DIR)/$@
 
 maxmat3.x: $(MUM3OBJECTS) $(LIBSTREE)

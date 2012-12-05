@@ -11,7 +11,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <mpi.h>
 #include "types.h"
 #include "debugdef.h"
 #include "errordef.h"
@@ -62,7 +61,7 @@ static void showmaxmatflags (char *program,
 */
 
 Sint parsemaxmatoptions (MMcallinfo *maxmatcallinfo,
-                         int argc,
+                         Argctype argc,
                          char **argv);
 
 /*EE
@@ -86,68 +85,45 @@ Sint procmaxmatches(MMcallinfo *mmcallinfo,
   This is the main function.
 */
 
-using namespace std;
-
-int main(int argc, char **argv)
+MAINFUNCTION
 {
   Sint retcode;
   MMcallinfo mmcallinfo;
   Multiseq subjectmultiseq;
-    int numprocs, rank, namelen;
-    double start, finish;
-
-    MPI::Init(argc, argv);
-    numprocs = MPI::COMM_WORLD.Get_size();
-    rank = MPI::COMM_WORLD.Get_rank();
 
   DEBUGLEVELSET;
   initclock();
   retcode = parsemaxmatoptions (&mmcallinfo, argc, argv);
   if (retcode < 0)
   {
-        fprintf(stderr,"%s: %s\n",argv[0],messagespace());
-        MPI::Finalize();
-        return EXIT_FAILURE;
+    STANDARDMESSAGE;  // return error code and show message
   }
   if (retcode == 1)   // program was called with option -help
   {
     checkspaceleak ();
     mmcheckspaceleak ();
-    MPI::Finalize();
     return EXIT_SUCCESS;
   }
   DEBUGCODE(1,showmaxmatflags (argv[0], &mmcallinfo));
-    if (rank == 0) 
-    {
-        start = MPI::Wtime();
   if (getmaxmatinput (&subjectmultiseq,
                       mmcallinfo.matchnucleotidesonly,
                       &mmcallinfo.subjectfile[0]) != 0)
   {
-        fprintf(stderr,"%s: %s\n",argv[0],messagespace());
-        MPI::Finalize();
-        return EXIT_FAILURE;
+    STANDARDMESSAGE;
   }
   if(procmaxmatches(&mmcallinfo,&subjectmultiseq) != 0)
   {
-        fprintf(stderr,"%s: %s\n",argv[0],messagespace());
-        MPI::Finalize();
-        return EXIT_FAILURE;
+    STANDARDMESSAGE;
   }
   freemultiseq (&subjectmultiseq);
   checkspaceleak ();
   mmcheckspaceleak ();
-  fprintf(stderr,"# COMPLETETIME %s %s %.2f\n",
+  /*fprintf(stderr,"# COMPLETETIME %s %s %.2f\n",
          argv[0],&mmcallinfo.subjectfile[0],
          getruntime());
   fprintf(stderr,"# SPACE %s %s %.2f\n",argv[0],
          &mmcallinfo.subjectfile[0],
-         MEGABYTES(getspacepeak()+mmgetspacepeak()));
-        cerr << "Toci application for genome alignment under HPC environments" << endl;
-        finish = MPI::Wtime();
-    }
-    MPI_Finalize();
-    cerr << "Final Time: " << finish-start << endl;
+         MEGABYTES(getspacepeak()+mmgetspacepeak()));*/
   return EXIT_SUCCESS;
 }
 

@@ -10,537 +10,18 @@
 
 #include <stdio.h>
 #include <ctype.h>
-#include <iostream>
-#include <vector>
+#include <omp.h>
 #include "streedef.h"
 #include "debugdef.h"
 #include "spacedef.h"
 #include "maxmatdef.h"
-#include "streeacc.h"
-#include "streehuge.h"
-#include "protodef.h"
+
 //}
-using namespace std;
+
 /*EE
   This module contains functions to compute MUM-candidates using
   a linear time suffix tree traversal. 
 */
-
-static void int2ref(Suffixtree *stree,Reference *ref,Uint i)
-{
-  if(ISLEAF(i))
-  {
-    ref->toleaf = True;
-    ref->address = stree->leaftab + GETLEAFINDEX(i);
-  } else
-  {
-    ref->toleaf = False;
-    ref->address = stree->branchtab + GETBRANCHINDEX(i);
-  }
-}
-
-Uint getlargelinkstree(/*@unused@*/ Suffixtree *stree,Bref btptr,Uint depth)
-{
-  if(depth == UintConst(1))
-  {
-    return 0;
-  }
-  return *(btptr+4);
-}
-
-void rescanstree(Suffixtree *stree,Location *loc,
-                 Bref btptr,SYMBOL *left,SYMBOL *right)
-{
-  Uint *nodeptr, *largeptr = NULL, leafindex, nodedepth, 
-       node, distance = 0, prefixlen, headposition, tmpnodedepth;
-  SYMBOL *lptr;
-
-  lptr = left;
-  nodeptr = btptr; 
-  if(nodeptr == stree->branchtab)
-  {
-    nodedepth = 0;
-    headposition = 0;
-  } else
-  {
-    GETBOTH(nodedepth,headposition,nodeptr);
-  }
-  loc->nextnode.toleaf = False;
-  loc->nextnode.address = nodeptr;
-  loc->locstring.start = headposition;
-  loc->locstring.length = nodedepth;
-  loc->remain = 0;
-  while(True)
-  {
-    if(lptr > right)   // check for empty word
-    {
-      return;
-    }
-    if(nodeptr == stree->branchtab)  // at the root
-    {
-      node = stree->rootchildren[(Uint) *lptr];
-      prefixlen = (Uint) (right - lptr + 1);
-      if(ISLEAF(node))   // stop if successor is leaf
-      {
-        leafindex = GETLEAFINDEX(node);
-        loc->firstptr = stree->text + leafindex;
-        loc->previousnode = stree->branchtab;
-        loc->edgelen = stree->textlen - leafindex + 1;
-        loc->remain = loc->edgelen - prefixlen;
-        loc->nextnode.toleaf = True;
-        loc->nextnode.address = stree->leaftab + leafindex;
-        loc->locstring.start = leafindex;
-        loc->locstring.length = prefixlen;
-        return;
-      } 
-      nodeptr = stree->branchtab + GETBRANCHINDEX(node);
-      GETONLYHEADPOS(headposition,nodeptr);
-      loc->firstptr = stree->text + headposition;
-    } else
-    {
-      node = GETCHILD(nodeptr);
-      while(True)             // traverse the list of successors
-      {
-        if(ISLEAF(node))   // successor is leaf
-        {
-          leafindex = GETLEAFINDEX(node);
-          loc->firstptr = stree->text + (nodedepth + leafindex);
-          if(*(loc->firstptr) == *lptr)    // correct edge found
-          {
-            prefixlen = (Uint) (right - lptr + 1);
-            loc->previousnode = loc->nextnode.address;
-            loc->edgelen = stree->textlen - (nodedepth + leafindex) + 1;
-            loc->remain = loc->edgelen - prefixlen;
-            loc->nextnode.toleaf = True;
-            loc->nextnode.address = stree->leaftab + leafindex;
-            loc->locstring.start = leafindex;
-            loc->locstring.length = nodedepth + prefixlen;
-            return;
-          }
-          node = LEAFBROTHERVAL(stree->leaftab[leafindex]);  
-        } else   // successor is branch node
-        {
-          nodeptr = stree->branchtab + GETBRANCHINDEX(node);
-          GETONLYHEADPOS(headposition,nodeptr);
-          loc->firstptr = stree->text + (nodedepth + headposition);
-          if(*(loc->firstptr) == *lptr) // correct edge found
-          {
-            /*@innerbreak@*/ break;
-          } 
-          node = GETBROTHER(nodeptr);
-        }
-      }
-    }
-    GETONLYDEPTH(tmpnodedepth,nodeptr);     // get info about succ node
-    loc->edgelen = tmpnodedepth - nodedepth;
-    prefixlen = (Uint) (right - lptr + 1);
-    loc->previousnode = loc->nextnode.address;
-    loc->nextnode.toleaf = False;
-    loc->nextnode.address = nodeptr;
-    loc->locstring.start = headposition;
-    loc->locstring.length = nodedepth + prefixlen;
-    if(loc->edgelen > prefixlen)     // can reach the successor node
-    {
-      loc->remain = loc->edgelen - prefixlen;
-      return;
-    } 
-    if(loc->edgelen == prefixlen)
-    {
-      loc->remain = 0;
-      return;
-    }
-    lptr += loc->edgelen;
-    nodedepth = tmpnodedepth;
-  }
-}
-
-void getbranchinfostree(Suffixtree *stree,Uint whichinfo,
-                        Branchinfo *branchinfo,Bref btptr)
-{
-  Uint which = whichinfo, node, distance, *largeptr;
-
-  if(which & ACCESSSUFFIXLINK)
-  {
-    which |= ACCESSDEPTH;
-  }
-  if(which & (ACCESSDEPTH | ACCESSHEADPOS))
-  {
-    if(stree->chainstart != NULL && btptr >= stree->chainstart)
-    {
-      distance = DIVBYSMALLINTS((Uint) (stree->nextfreebranch - btptr));
-      branchinfo->depth = stree->currentdepth + distance;
-      branchinfo->headposition = stree->nextfreeleafnum - distance;
-    } else
-    {
-      if(ISLARGE(*btptr))
-      {
-        if(which & ACCESSDEPTH)
-        {
-          branchinfo->depth = GETDEPTH(btptr);
-        }
-        if(which & ACCESSHEADPOS)
-        {
-          branchinfo->headposition = GETHEADPOS(btptr);
-        }
-      } else
-      {
-        distance = GETDISTANCE(btptr);
-        GETCHAINEND(largeptr,btptr,distance);
-        if(which & ACCESSDEPTH)
-        {
-          branchinfo->depth = GETDEPTH(largeptr) + distance;
-        }
-        if(which & ACCESSHEADPOS)
-        {
-          branchinfo->headposition = GETHEADPOS(largeptr) - distance;
-        }
-      }
-    }
-  }
-  if(which & ACCESSSUFFIXLINK)
-  {
-    if((stree->chainstart != NULL && btptr >= stree->chainstart) || 
-       !ISLARGE(*btptr))
-    {
-      branchinfo->suffixlink = btptr + SMALLINTS;
-    } else
-    {
-      branchinfo->suffixlink = stree->branchtab + 
-                               getlargelinkstree(stree,btptr,
-                                                 branchinfo->depth);
-    }
-  }
-  if(which & ACCESSFIRSTCHILD)
-  {
-    int2ref(stree,&(branchinfo->firstchild),GETCHILD(btptr));
-  }
-  if(which & ACCESSBRANCHBROTHER)
-  {
-    node = GETBROTHER(btptr);
-    if(NILPTR(node))
-    {
-      branchinfo->branchbrother.address = NULL;
-    } else
-    {
-      int2ref(stree,&(branchinfo->branchbrother),node);
-    }
-  }
-}
-
-static Uint lcp(SYMBOL *start1,SYMBOL *end1,SYMBOL *start2,SYMBOL *end2)
-{
-  register SYMBOL *ptr1 = start1, 
-                  *ptr2 = start2;
-
-  while(ptr1 <= end1 && 
-        ptr2 <= end2 &&
-        *ptr1 == *ptr2)
-  {
-    ptr1++;
-    ptr2++;
-  }
-  return (Uint) (ptr1-start1);
-}
-
-/*@null@*/ SYMBOL *scanprefixfromnodestree(Suffixtree *stree,Location *loc,
-                                           Bref btptr,SYMBOL *left,
-                                           SYMBOL *right,Uint rescanlength)
-{
-  Uint *nodeptr = NULL, *largeptr = NULL, leafindex, nodedepth, 
-       node, distance = 0, prefixlen, headposition, tmpnodedepth,
-       edgelen, remainingtoskip;
-  SYMBOL *lptr, *leftborder = (SYMBOL *) NULL, firstchar, edgechar = 0;
-
-  lptr = left;
-  nodeptr = btptr;
-  if(nodeptr == stree->branchtab)
-  {
-    nodedepth = 0;
-    headposition = 0;
-  } else
-  {
-    GETBOTH(nodedepth,headposition,nodeptr);
-  }
-  loc->nextnode.toleaf = False;
-  loc->nextnode.address = nodeptr;
-  loc->locstring.start = headposition;
-  loc->locstring.length = nodedepth;
-  loc->remain = 0;
-  if(rescanlength <= nodedepth)
-  {
-    remainingtoskip = 0;
-  } else
-  {
-    remainingtoskip = rescanlength - nodedepth;
-  }
-  while(True)
-  {
-    if(lptr > right)   // check for empty word
-    {
-      return NULL;
-    }
-    firstchar = *lptr;
-    if(nodeptr == stree->branchtab)  // at the root
-    {
-      if((node = stree->rootchildren[(Uint) firstchar]) == UNDEFINEDREFERENCE)
-      {
-        return lptr;
-      }
-      if(ISLEAF(node))
-      {
-        leafindex = GETLEAFINDEX(node);
-        loc->firstptr = stree->text + leafindex;
-        if(remainingtoskip > 0)
-        {
-          prefixlen = remainingtoskip + 
-                      lcp(lptr+remainingtoskip,right,
-                          loc->firstptr+remainingtoskip,stree->sentinel-1);
-        } else
-        {
-          prefixlen = 1 + lcp(lptr+1,right,
-                              loc->firstptr+1,stree->sentinel-1);
-        }
-        loc->previousnode = stree->branchtab;
-        loc->edgelen = stree->textlen - leafindex + 1;
-        loc->remain = loc->edgelen - prefixlen;
-        loc->nextnode.toleaf = True;
-        loc->nextnode.address = stree->leaftab + leafindex;
-        loc->locstring.start = leafindex;
-        loc->locstring.length = prefixlen;
-        if(prefixlen == (Uint) (right - lptr + 1))
-        {
-          return NULL;
-        }
-        return lptr + prefixlen;
-      } 
-      nodeptr = stree->branchtab + GETBRANCHINDEX(node);
-      GETONLYHEADPOS(headposition,nodeptr);
-      leftborder = stree->text + headposition;
-    } else
-    {
-      node = GETCHILD(nodeptr);
-      while(True)
-      {
-        if(NILPTR(node))
-        {
-          return lptr;
-        }
-        if(ISLEAF(node))
-        {
-          leafindex = GETLEAFINDEX(node);
-          leftborder = stree->text + (nodedepth + leafindex);
-          if(leftborder == stree->sentinel)
-          {
-            return lptr;
-          }
-          edgechar = *leftborder;
-          if(edgechar > firstchar)
-          {
-            return lptr;
-          }
-          if(edgechar == firstchar)
-          {
-            if(remainingtoskip > 0)
-            {
-              prefixlen = remainingtoskip +
-                          lcp(lptr+remainingtoskip,right,
-                              leftborder+remainingtoskip,stree->sentinel-1);
-            } else
-            {
-              prefixlen = 1 + lcp(lptr+1,right,
-                                  leftborder+1,stree->sentinel-1);
-            }
-            loc->firstptr = leftborder;
-            loc->previousnode = loc->nextnode.address;
-            loc->edgelen = stree->textlen - (nodedepth + leafindex) + 1;
-            loc->remain = loc->edgelen - prefixlen;
-            loc->nextnode.toleaf = True;
-            loc->nextnode.address = stree->leaftab + leafindex;
-            loc->locstring.start = leafindex;
-            loc->locstring.length = nodedepth + prefixlen;
-            if(prefixlen == (Uint) (right - lptr + 1))
-            {
-              return NULL;
-            }
-            return lptr + prefixlen;
-          }
-          node = LEAFBROTHERVAL(stree->leaftab[leafindex]);
-        } else
-        {
-          nodeptr = stree->branchtab + GETBRANCHINDEX(node);
-          GETONLYHEADPOS(headposition,nodeptr);
-          leftborder = stree->text + (nodedepth + headposition);
-          edgechar = *leftborder;
-          if (edgechar > firstchar)
-          {
-            return lptr;
-          }
-          if(edgechar == firstchar)
-          {
-            /*@innerbreak@*/ break;
-          }
-          node = GETBROTHER(nodeptr);
-        }
-      }
-    }
-    GETONLYDEPTH(tmpnodedepth,nodeptr);
-    edgelen = tmpnodedepth - nodedepth;
-    if(remainingtoskip > 0)
-    {
-      if(remainingtoskip >= edgelen)
-      {
-        prefixlen = edgelen;
-        remainingtoskip -= prefixlen;
-      } else
-      {
-        NOTSUPPOSEDTOBENULL(leftborder);
-        prefixlen = remainingtoskip + 
-                    lcp(lptr+remainingtoskip,right,
-                        leftborder+remainingtoskip,leftborder+edgelen-1);
-        remainingtoskip = 0;
-      }
-    } else
-    {
-      NOTSUPPOSEDTOBENULL(leftborder);
-      prefixlen = 1 + lcp(lptr+1,right,
-                          leftborder+1,leftborder+edgelen-1);
-    }
-    loc->nextnode.toleaf = False;
-    loc->locstring.start = headposition;
-    loc->locstring.length = nodedepth + prefixlen;
-    if(prefixlen == edgelen)
-    {
-      lptr += edgelen;
-      nodedepth += edgelen;
-      loc->nextnode.address = nodeptr;
-      loc->remain = 0;
-    } else
-    {
-      loc->firstptr = leftborder;
-      loc->previousnode = loc->nextnode.address;
-      loc->nextnode.address = nodeptr;
-      loc->edgelen = edgelen;
-      loc->remain = loc->edgelen - prefixlen;
-      if(prefixlen == (Uint) (right - lptr + 1))
-      {
-        return NULL;
-      }
-      return lptr + prefixlen;
-    }
-  }
-}
-
-void linklocstree(Suffixtree *stree,Location *outloc,Location *inloc)
-{
-  Branchinfo branchinfo;
-
-  if(inloc->remain == 0)
-  {
-    outloc->remain = 0;
-    outloc->nextnode.toleaf = False;
-    getbranchinfostree(stree,ACCESSSUFFIXLINK,&branchinfo,
-                       inloc->nextnode.address);
-    outloc->nextnode.address = branchinfo.suffixlink;
-    outloc->locstring.start = inloc->locstring.start + 1;
-    outloc->locstring.length = inloc->locstring.length - 1;
-  } else
-  {
-    if(inloc->previousnode == stree->branchtab)
-    {
-      rescanstree(stree,outloc,stree->branchtab,inloc->firstptr+1,
-                  inloc->firstptr + (inloc->edgelen - inloc->remain) - 1);
-    } else
-    {
-      getbranchinfostree(stree,ACCESSSUFFIXLINK,&branchinfo,
-                         inloc->previousnode);
-      rescanstree(stree,outloc,branchinfo.suffixlink,inloc->firstptr,
-             inloc->firstptr + (inloc->edgelen - inloc->remain) - 1);
-      
-    }
-  } 
-}
-
-/*@null@*/ SYMBOL *scanprefixstree(Suffixtree *stree,Location *outloc,
-                                   Location *inloc,SYMBOL *left,
-                                   SYMBOL *right,Uint rescanlength)
-{
-  Uint prefixlen, remainingtoskip;
-
-  /*DEBUG0(4,"scanprefixstree starts at location ");
-  DEBUGCODE(4,showlocation(stdout,stree,inloc));
-  DEBUG0(4,"\n");*/
-  if(inloc->remain == 0)
-  {
-    return scanprefixfromnodestree(stree,outloc,inloc->nextnode.address,
-                                   left,right,rescanlength);
-  } 
-  if(rescanlength <= inloc->locstring.length)
-  {
-    remainingtoskip = 0;
-  } else
-  {
-    remainingtoskip = rescanlength - inloc->locstring.length;
-  }
-  if(inloc->nextnode.toleaf)
-  {
-    
-    if(remainingtoskip > 0)
-    {
-      prefixlen = remainingtoskip +
-                  lcp(left+remainingtoskip,right,
-                      inloc->firstptr+(inloc->edgelen-inloc->remain)
-                                     +remainingtoskip,
-                      stree->sentinel-1);
-    } else
-    {
-      prefixlen = lcp(left,right,
-                      inloc->firstptr+(inloc->edgelen-inloc->remain),
-                      stree->sentinel-1);
-    }
-    outloc->firstptr = inloc->firstptr;
-    outloc->edgelen = inloc->edgelen;
-    outloc->remain = inloc->remain - prefixlen;
-    outloc->previousnode = inloc->previousnode;
-    outloc->nextnode.toleaf = True;
-    outloc->nextnode.address = inloc->nextnode.address;
-    outloc->locstring.start = LEAFADDR2NUM(stree,inloc->nextnode.address);
-    outloc->locstring.length = inloc->locstring.length + prefixlen;
-    return left + prefixlen;
-  }
-  if(remainingtoskip > 0)
-  {
-    if(remainingtoskip >= inloc->remain)
-    {
-      prefixlen = inloc->remain;
-    } else
-    {
-      prefixlen = remainingtoskip + 
-                  lcp(left+remainingtoskip,right,
-                      inloc->firstptr+(inloc->edgelen-inloc->remain)
-                                     +remainingtoskip,
-                      inloc->firstptr+inloc->edgelen-1);
-    }
-  } else
-  {
-    prefixlen = lcp(left,right,
-                    inloc->firstptr+(inloc->edgelen-inloc->remain),
-                    inloc->firstptr+inloc->edgelen-1);
-  }
-  if(prefixlen < inloc->remain)
-  {
-    outloc->firstptr = inloc->firstptr;
-    outloc->edgelen = inloc->edgelen;
-    outloc->remain = inloc->remain - prefixlen;
-    outloc->previousnode = inloc->previousnode;
-    outloc->nextnode.toleaf = False;
-    outloc->nextnode.address = inloc->nextnode.address;
-    outloc->locstring.start = inloc->locstring.start;
-    outloc->locstring.length = inloc->locstring.length + prefixlen;
-    return left + prefixlen;
-  }
-  return scanprefixfromnodestree(stree,outloc,inloc->nextnode.address,
-                                   left+prefixlen,right,rescanlength);
-}
 
 /*
   The following function checks if a location \texttt{loc} (of length 
@@ -660,63 +141,74 @@ static Sint checkiflocationisMUMcand (Location *loc,
 */
 
 Sint findmumcandidates(Suffixtree *stree,
-                       vector<Uint*> table,
                        Uint minmatchlength,
+                       Uint chunks,
                        Processmatchfunction processmumcandidate,
                        void *processinfo,
                        Uchar *query,
                        Uint querylen,
                        Uint seqnum)
 {
-  Uchar *lptr, 
+  Uchar *lptr, *left,
         *right = query + querylen - 1, 
         *querysuffix;
   Location loc;
-
+  int i, nthreads;
+  Uint N = 0, Size = 32768;
+  double start, end;
+  
   DEBUG1(2,"query of length %lu=",(Showuint) querylen);
   DEBUGCODE(2,(void) fwrite(query,sizeof(Uchar),(size_t) querylen,stdout));
   DEBUG0(2,"\n");
-  lptr = scanprefixfromnodestree (stree, &loc, ROOT (stree), query, right, 0);
-  for (querysuffix = query; lptr != NULL; querysuffix++)
+  start = omp_get_wtime();
+#pragma omp parallel default(none) firstprivate(Size) private(i,left,right,lptr,querysuffix,loc) shared(stdout,chunks,query,querylen,stree,minmatchlength,seqnum,nthreads) reduction(+:N)
   {
-    //DEBUGCODE(2,showlocation(stdout,stree,&loc));
-    if(loc.locstring.length >= minmatchlength &&
-       checkiflocationisMUMcand(&loc,stree->text, 
-                                querysuffix, 
-                                query,
-                                seqnum,
-                                processmumcandidate,
-                                processinfo) != 0)
-    {
-      return -1;
-    }
-    if (ROOTLOCATION (&loc))
-    {
-      lptr = scanprefixfromnodestree (stree, &loc, ROOT (stree), 
+      nthreads = omp_get_num_threads();
+#pragma omp for schedule(runtime) nowait
+      for (i=0;i<chunks;i++)
+      {
+          left = query + (Uint)(querylen/chunks*i);
+          right = query + (Uint)(querylen/chunks*(i+1))-1;
+          lptr = scanprefixfromnodestree (stree, &loc, ROOT (stree), 
+                                  query, right, 0);
+          for (querysuffix = query; lptr != NULL; querysuffix++)
+          {
+              DEBUGCODE(2,showlocation(stdout,stree,&loc));
+              if (loc.locstring.length >= minmatchlength && loc.remain > 0 && loc.nextnode.toleaf)
+              {
+                  if (querysuffix == query || loc.locstring.start == 0 || *(querysuffix - 1) != stree->text[loc.locstring.start - 1])
+                  {
+                      N++;
+                  }
+              }
+              if (ROOTLOCATION (&loc))
+              {
+                  lptr = scanprefixfromnodestree (stree, &loc, ROOT (stree), 
                                       lptr + 1, right, 0);
-    }
-    else
-    {
-      linklocstree (stree, &loc, &loc);
-      lptr = scanprefixstree (stree, &loc, &loc, lptr, right, 0);
-    }
+              }
+              else
+              {
+                  linklocstree (stree, &loc, &loc);
+                  lptr = scanprefixstree (stree, &loc, &loc, lptr, right, 0);
+              }
+          }
+          DEBUGCODE(2,showlocation(stdout,stree,&loc));
+          while (!ROOTLOCATION (&loc) && loc.locstring.length >= minmatchlength)
+          {
+              if (loc.locstring.length >= minmatchlength && loc.remain > 0 && loc.nextnode.toleaf)
+              {
+                  if (querysuffix == query || loc.locstring.start == 0 || *(querysuffix - 1) != stree->text[loc.locstring.start - 1])
+                  {
+                      N++;
+                  }
+              }
+              linklocstree (stree, &loc, &loc);
+              querysuffix++;
+              DEBUGCODE(2,showlocation(stdout,stree,&loc));
+          }
+      }
   }
-  //DEBUGCODE(2,showlocation(stdout,stree,&loc));
-  while (!ROOTLOCATION (&loc) && loc.locstring.length >= minmatchlength)
-  {
-    if(checkiflocationisMUMcand (&loc,
-                                 stree->text, 
-                                 querysuffix, 
-                                 query,
-                                 seqnum,
-                                 processmumcandidate,
-                                 processinfo) != 0)
-    {
-      return -2;
-    }
-    linklocstree (stree, &loc, &loc);
-    querysuffix++;
-    //DEBUGCODE(2,showlocation(stdout,stree,&loc));
-  }
+  end = omp_get_wtime();
+  fprintf(stdout,"Threads=%d,Chunks=%d,Chunk_size=%lu,Matches=%lu,MUMTime=%f,", nthreads, chunks, (Uint) (querylen/chunks), N, (double) (end-start));
   return 0;
 }

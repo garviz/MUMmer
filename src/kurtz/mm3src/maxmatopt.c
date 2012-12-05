@@ -33,6 +33,11 @@
 
 #define DEFAULTMINUNIQUEMATCHLEN 20
 
+/*
+ * The default chunk for a query sequence
+ */
+
+#define DEFAULTCHUNK 1
 //}
 
 /*EE
@@ -53,7 +58,7 @@ typedef enum
   OPTSHOWREVERSEPOSITIONS,
   OPTFOURCOLUMN,
   OPTSHOWSEQUENCELENGTHS,
-  OPTTABLE,
+  OPTCHUNKS,
   OPTH,
   OPTHELP,
   NUMOFOPTIONS
@@ -96,7 +101,7 @@ static void showusage(char *program,OptionDescription *options,
   Otherwise, a negative value is returned.
 */
 
-Sint parsemaxmatoptions(MMcallinfo *mmcallinfo,int argc, char *argv[])
+Sint parsemaxmatoptions(MMcallinfo *mmcallinfo,Argctype argc, char **argv)
 {
   OptionDescription options[NUMOFOPTIONS];   // store the options
   Sint optval;         // neg. return val. if error, otherwise option number
@@ -134,7 +139,7 @@ Sint parsemaxmatoptions(MMcallinfo *mmcallinfo,int argc, char *argv[])
 	    "reference sequence inputs");
   ADDOPTION(OPTSHOWSEQUENCELENGTHS,"-L",
             "show the length of the query sequences on the header line");
-  ADDOPTION(OPTTABLE,"-T","size of the word to store in Direct access table");
+  ADDOPTION(OPTCHUNKS,"-C","number of chunks to split query sequence");
   ADDOPTION(OPTH,"-h",
 	    "show possible options");
   ADDOPTION(OPTHELP,"-help",
@@ -150,6 +155,7 @@ Sint parsemaxmatoptions(MMcallinfo *mmcallinfo,int argc, char *argv[])
   mmcallinfo->cmumcand = False;
   mmcallinfo->cmaxmatch = False;
   mmcallinfo->minmatchlength = (Uint) DEFAULTMINUNIQUEMATCHLEN;
+  mmcallinfo->chunks = (Uint) DEFAULTCHUNK;
 
   if(argc == 1)
   {
@@ -193,8 +199,8 @@ Sint parsemaxmatoptions(MMcallinfo *mmcallinfo,int argc, char *argv[])
         mmcallinfo->minmatchlength = (Uint) readint;
         break;
       case OPTFOURCOLUMN:
-	mmcallinfo->fourcolumn = True;
-	break;
+	    mmcallinfo->fourcolumn = True;
+	    break;
       case OPTSHOWSEQUENCELENGTHS:
         mmcallinfo->showsequencelengths = True; 
         break;
@@ -206,8 +212,8 @@ Sint parsemaxmatoptions(MMcallinfo *mmcallinfo,int argc, char *argv[])
         mmcallinfo->reversecomplement = True; 
         break;
       case OPTMAXMATCH:
-	mmcallinfo->cmaxmatch = True;
-	break;
+	    mmcallinfo->cmaxmatch = True;
+	    break;
       case OPTMUMREF:
       case OPTMUMCAND:
         mmcallinfo->cmumcand = True;
@@ -215,21 +221,21 @@ Sint parsemaxmatoptions(MMcallinfo *mmcallinfo,int argc, char *argv[])
       case OPTMUM:
         mmcallinfo->cmum = True;
         break;
-      case OPTTABLE:
+      case OPTCHUNKS:
         argnum++;
-        if(argnum > (Uint) (argc-2))
+        if (argnum > (Uint) (argc-2))
         {
-          ERROR1("missing argument for option %s",
-                  options[OPTTABLE].optname);
-          return -2;
+            ERROR1("missing argument for option %s",
+                    options[OPTCHUNKS].optname);
+            return -2;
         }
-        if(sscanf(argv[argnum],"%ld",&readint) != 1 || readint <= 0)
+        if (sscanf(argv[argnum],"%ld",&readint) != 1 || readint <= 0)
         {
-          ERROR2("argument %s for option %s is not a positive integer",
-                  argv[argnum],options[OPTTABLE].optname);
-          return -3;
+            ERROR2("argument %s for option %s is no a positive integer",
+                    argv[argnum],options[OPTCHUNKS].optname);
+            return -3;
         }
-        mmcallinfo->wordsize = (Uint) readint;
+        mmcallinfo->chunks = (Uint) readint;
         break;
       case OPTH:
       case OPTHELP:

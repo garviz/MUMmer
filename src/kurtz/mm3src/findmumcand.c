@@ -11,6 +11,7 @@
 #include <stdio.h>
 #include <ctype.h>
 #include <omp.h>
+#include <likwid.h>
 #include "streedef.h"
 #include "debugdef.h"
 #include "spacedef.h"
@@ -22,6 +23,45 @@
   This module contains functions to compute MUM-candidates using
   a linear time suffix tree traversal. 
 */
+
+typedef struct
+  { 
+   long int  R, Q, Len, Seq;
+   unsigned int  Good : 1;
+   unsigned int  Tentative : 1;
+  } Match_t;
+
+/* Reallocate memory for  Q  to  Len  bytes and return a
+*  pointer to the new memory.  Exit if fail. */
+void *  Safe_realloc  (void * Q, size_t Len)
+  {
+   void  * P;
+
+   P = realloc (Q, Len);
+   if  (P == NULL)
+   { 
+      fprintf (stderr, "# ERROR:  realloc failed, there is not enough memory\n");
+      //MPI_Finalize();
+   } 
+
+   return  P;
+  }  
+
+/* Allocate and return a pointer to  Len  bytes of memory.
+*  Exit if fail. */
+void *  Safe_malloc  (size_t Len)
+  {
+   void  * P;
+
+   P = malloc (Len);
+   if  (P == NULL)
+   {
+      fprintf (stderr,"# ERROR:  malloc failed, there is not enough memory\n");
+      //MPI_Finalize();
+   }
+
+   return  P;
+  }
 
 /*
   The following function checks if a location \texttt{loc} (of length 
@@ -84,9 +124,9 @@ static Sint checkiflocationisMUMcand (Location *loc,
 				      Uchar *querysuffix,
 				      Uchar *query,
                                       Uint seqnum,
-                                      Processmatchfunction 
-                                        processmumcandidate,
-                                      void *processinfo)
+                                      Match_t *A,
+                                      Uint *Size,
+                                      Uint *N)
 {
   if (loc->remain > 0 
       && loc->nextnode.toleaf
@@ -94,15 +134,18 @@ static Sint checkiflocationisMUMcand (Location *loc,
 			       || *(querysuffix - 1) != 
                                   subjectseq[loc->locstring.start - 1]))
   {
-    if(processmumcandidate(processinfo,
-                           loc->locstring.length,   // matchlength
-	                   loc->locstring.start,    // subject start
-                           seqnum,                  // queryseq
-                           (Uint) (querysuffix -   
-                                   query)) != 0)    // querystart
-    {
-      return -1;
-    }
+      //fprintf(stdout,"%lu,%lu,%lu\n",loc->locstring.start,(Uint) (querysuffix-query),loc->locstring.length);
+      if (*N >= *Size -1)
+      {
+          *Size = *Size * 2;
+          A = (Match_t *) Safe_realloc (A, *Size * sizeof (Match_t));
+      }
+      /*A[*N].R = loc->locstring.start;
+      A[*N].Q = (Uint) (querysuffix-query);
+      A[*N].Len = loc->locstring.length;
+      A[*N].Seq = seqnum;
+      fprintf(stderr,"%lu %lu %lu %lu %lu\n", (*N), A[(*N)].R, A[(*N)].Q, A[(*N)].Len, A[(*N)].Seq);*/
+      (*N)++;
   }
   return 0;
 }
@@ -154,61 +197,70 @@ Sint findmumcandidates(Suffixtree *stree,
         *querysuffix;
   Location loc;
   int i, nthreads;
-  Uint N = 0, Size = 32768;
+  Uint N, Size;
   double start, end;
+  Match_t *A;
   
   DEBUG1(2,"query of length %lu=",(Showuint) querylen);
   DEBUGCODE(2,(void) fwrite(query,sizeof(Uchar),(size_t) querylen,stdout));
   DEBUG0(2,"\n");
   start = omp_get_wtime();
-#pragma omp parallel default(none) firstprivate(Size) private(i,left,right,lptr,querysuffix,loc) shared(stdout,chunks,query,querylen,stree,minmatchlength,seqnum,nthreads) reduction(+:N)
-  {
+#pragma omp parallel default(none) private(i,left,right,lptr,querysuffix,loc,N,A,Size,processmumcandidate,processinfo) shared(stdout,chunks,query,querylen,stree,minmatchlength,seqnum,nthreads)
+  { 
+      likwid_markerStartRegion("Find MUMs");
       nthreads = omp_get_num_threads();
+      A = (Match_t *) Safe_malloc (Size * sizeof (Match_t));
+      Size = 32768;
+      N = 0;
 #pragma omp for schedule(runtime) nowait
       for (i=0;i<chunks;i++)
-      {
+      { 
           left = query + (Uint)(querylen/chunks*i);
           right = query + (Uint)(querylen/chunks*(i+1))-1;
+          likwid_markerStartRegion("ROOT");
           lptr = scanprefixfromnodestree (stree, &loc, ROOT (stree), 
                                   query, right, 0);
-          for (querysuffix = query; lptr != NULL; querysuffix++)
-          {
+          likwid_markerStopRegion("ROOT");
+          for (querysuffix = query; querysuffix<right && lptr != NULL; querysuffix++)
+           {
               DEBUGCODE(2,showlocation(stdout,stree,&loc));
-              if (loc.locstring.length >= minmatchlength && loc.remain > 0 && loc.nextnode.toleaf)
-              {
-                  if (querysuffix == query || loc.locstring.start == 0 || *(querysuffix - 1) != stree->text[loc.locstring.start - 1])
-                  {
-                      N++;
-                  }
-              }
+              likwid_markerStartRegion("MUM");
+              if (loc.locstring.length >= minmatchlength)
+                  checkiflocationisMUMcand(&loc,stree->text, querysuffix, query, seqnum, A, &Size, &N);
+              likwid_markerStopRegion("MUM");
               if (ROOTLOCATION (&loc))
               {
+                  likwid_markerStartRegion("ROOT");
                   lptr = scanprefixfromnodestree (stree, &loc, ROOT (stree), 
                                       lptr + 1, right, 0);
+                  likwid_markerStopRegion("ROOT");
               }
               else
-              {
+               { 
+                  likwid_markerStartRegion("SL");
                   linklocstree (stree, &loc, &loc);
                   lptr = scanprefixstree (stree, &loc, &loc, lptr, right, 0);
+                  likwid_markerStopRegion("SL");
               }
           }
           DEBUGCODE(2,showlocation(stdout,stree,&loc));
           while (!ROOTLOCATION (&loc) && loc.locstring.length >= minmatchlength)
-          {
-              if (loc.locstring.length >= minmatchlength && loc.remain > 0 && loc.nextnode.toleaf)
-              {
-                  if (querysuffix == query || loc.locstring.start == 0 || *(querysuffix - 1) != stree->text[loc.locstring.start - 1])
-                  {
-                      N++;
-                  }
-              }
+          { 
+              likwid_markerStartRegion("MUM");
+              if (loc.locstring.length >= minmatchlength)
+                  checkiflocationisMUMcand(&loc,stree->text, querysuffix, query, seqnum, A, &Size, &N);
+              likwid_markerStopRegion("MUM");
+              likwid_markerStartRegion("SL");
               linklocstree (stree, &loc, &loc);
+              likwid_markerStopRegion("SL");
               querysuffix++;
               DEBUGCODE(2,showlocation(stdout,stree,&loc));
           }
       }
+      likwid_markerStopRegion("Find MUMs");
+      //fprintf(stdout,"Matches=%lu,Size=%lu,",N,Size);
   }
   end = omp_get_wtime();
-  fprintf(stdout,"Threads=%d,Chunks=%d,Chunk_size=%lu,Matches=%lu,MUMTime=%f,", nthreads, chunks, (Uint) (querylen/chunks), N, (double) (end-start));
+  fprintf(stdout,"Threads=%d,Chunks=%d,Chunk_size=%lu,MUMTime=%f,", nthreads, chunks, (Uint) (querylen/chunks), N, (double) (end-start));
   return 0;
 }

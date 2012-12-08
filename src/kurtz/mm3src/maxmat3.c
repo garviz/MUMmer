@@ -11,6 +11,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <omp.h>
+#include <likwid.h>
 #include "types.h"
 #include "debugdef.h"
 #include "errordef.h"
@@ -87,10 +89,12 @@ Sint procmaxmatches(MMcallinfo *mmcallinfo,
 
 MAINFUNCTION
 {
+  likwid_markerInit();
   Sint retcode;
   MMcallinfo mmcallinfo;
   Multiseq subjectmultiseq;
-
+  double start, end;
+  start = omp_get_wtime();
   DEBUGLEVELSET;
   initclock();
   retcode = parsemaxmatoptions (&mmcallinfo, argc, argv);
@@ -124,7 +128,10 @@ MAINFUNCTION
   fprintf(stderr,"# SPACE %s %s %.2f\n",argv[0],
          &mmcallinfo.subjectfile[0],
          MEGABYTES(getspacepeak()+mmgetspacepeak()));*/
+  end = omp_get_wtime();
+  fprintf(stdout,"Total=%f\n", (double) (end-start));
+  likwid_markerClose();
   return EXIT_SUCCESS;
-}
+} 
 
 //}

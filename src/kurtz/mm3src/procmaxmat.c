@@ -12,6 +12,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
+#include <omp.h>
 #include "types.h"
 #include "debugdef.h"
 #include "errordef.h"
@@ -578,11 +579,11 @@ Sint procmaxmatches(MMcallinfo *mmcallinfo,Multiseq *subjectmultiseq)
     }
     freemultiseq(&matchprocessinfo.querymultiseq);
   }
-  fprintf(stdout,"ST=%f,",(double) (finish-start));
   if(mmcallinfo->cmum)
   {
     FREEARRAY(&matchprocessinfo.mumcandtab,MUMcandidate);
   }
   freestree (&matchprocessinfo.stree);
+  fprintf(stdout,"ST=%f,",(double) (finish-start));
   return 0;
 }

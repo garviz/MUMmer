@@ -42,9 +42,9 @@ CSH  := $(filter /%,$(shell /bin/sh -c 'type csh'))
 PERL := $(filter /%,$(shell /bin/sh -c 'type perl'))
 AR   := $(filter /%,$(shell /bin/sh -c 'type ar'))
 
-CXXFLAGS = -fopenmp -O3
+CXXFLAGS = -Wno-write-strings -Wno-strings-format -fopenmp -O3
 CFLAGS = -fopenmp -O3
-LDFLAGS  =
+LDFLAGS  = -llikwid -lm
 
 FLATS = ACKNOWLEDGEMENTS COPYRIGHT INSTALL LICENSE Makefile README ChangeLog
 

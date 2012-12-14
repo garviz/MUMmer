@@ -1,0 +1,145 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.8	//
+ALL	src/kurtz/mm3src/Makefile	/^ALL := maxmat3.x maxmat3.dbg.x$/;"	m
+ASSIGNMAXMATCOMPLEMENT	src/kurtz/mm3src/procmaxmat.c	141;"	d	file:
+BIN_DIR	src/kurtz/mm3src/Makefile	/^BIN_DIR := $(CURDIR)$/;"	m
+CHECKIFLOCATIONISVALID	src/kurtz/mm3src/findmaxmat.c	171;"	d	file:
+CHECKIFLOCATIONISVALID	src/kurtz/mm3src/findmaxmat.c	190;"	d	file:
+DEFAULTCHUNK	src/kurtz/mm3src/maxmatopt.c	40;"	d	file:
+DEFAULTMINUNIQUEMATCHLEN	src/kurtz/mm3src/maxmatopt.c	34;"	d	file:
+Findmatchfunction	src/kurtz/mm3src/procmaxmat.c	/^typedef Sint (*Findmatchfunction)(Suffixtree *,$/;"	t	file:
+Good	src/kurtz/mm3src/findmumcand.c	/^   unsigned int  Good : 1;$/;"	m	struct:__anon3	file:	access:public
+INCLUDEDIR	src/kurtz/mm3src/Makefile	/^INCLUDEDIR=-I${LIBBASEDIR} -I${LIBSTREEDIR}$/;"	m
+LD	src/kurtz/mm3src/Makefile	/^LD=$(CC)$/;"	m
+LIBBASE	src/kurtz/mm3src/Makefile	/^LIBBASE=$(LIBBASEDIR)\/libbase.a$/;"	m
+LIBBASEDBG	src/kurtz/mm3src/Makefile	/^LIBBASEDBG=$(LIBBASEDIR)\/libbase.dbg.a$/;"	m
+LIBBASEDIR	src/kurtz/mm3src/Makefile	/^LIBBASEDIR=..\/libbasedir$/;"	m
+LIBSTREE	src/kurtz/mm3src/Makefile	/^LIBSTREE=$(LIBSTREEDIR)\/libstree.a$/;"	m
+LIBSTREEDBG	src/kurtz/mm3src/Makefile	/^LIBSTREEDBG=$(LIBSTREEDIR)\/libstree.dbg.a$/;"	m
+LIBSTREEDIR	src/kurtz/mm3src/Makefile	/^LIBSTREEDIR=..\/streesrc$/;"	m
+Len	src/kurtz/mm3src/findmumcand.c	/^   long int  R, Q, Len, Seq;$/;"	m	struct:__anon3	file:	access:public
+MAXMATDEF_H	src/kurtz/mm3src/maxmatdef.h	12;"	d
+MAXNUMOFQUERYFILES	src/kurtz/mm3src/maxmatdef.h	38;"	d
+MMREPLACEMENTCHARQUERY	src/kurtz/mm3src/maxmatdef.h	32;"	d
+MMREPLACEMENTCHARSUBJECT	src/kurtz/mm3src/maxmatdef.h	31;"	d
+MMcallinfo	src/kurtz/mm3src/maxmatdef.h	/^} MMcallinfo;                   \/\/ \\Typedef{MMcallinfo}$/;"	t	typeref:struct:__anon4
+MUM3DBGOBJECTS	src/kurtz/mm3src/Makefile	/^MUM3DBGOBJECTS=maxmat3.dbg.o maxmatopt.dbg.o maxmatinp.dbg.o\\$/;"	m
+MUM3OBJECTS	src/kurtz/mm3src/Makefile	/^MUM3OBJECTS=maxmat3.o maxmatopt.o maxmatinp.o\\$/;"	m
+Match_t	src/kurtz/mm3src/findmumcand.c	/^  } Match_t;$/;"	t	typeref:struct:__anon3	file:
+Matchprocessinfo	src/kurtz/mm3src/procmaxmat.c	/^} Matchprocessinfo;            \/\/ \\Typedef{Matchprocessinfo}$/;"	t	typeref:struct:__anon6	file:
+Maxmatchinfo	src/kurtz/mm3src/findmaxmat.c	/^} Maxmatchinfo;$/;"	t	typeref:struct:__anon2	file:
+NUMOFOPTIONS	src/kurtz/mm3src/maxmatopt.c	/^  NUMOFOPTIONS$/;"	e	enum:__anon5	file:
+Nodeinfo	src/kurtz/mm3src/findmaxmat.c	/^DECLAREARRAYSTRUCT(Nodeinfo);$/;"	v
+Nodeinfo	src/kurtz/mm3src/findmaxmat.c	/^} Nodeinfo;$/;"	t	typeref:struct:__anon1	file:
+OPTCHUNKS	src/kurtz/mm3src/maxmatopt.c	/^  OPTCHUNKS,$/;"	e	enum:__anon5	file:
+OPTCOMPUTEBOTHDIRECTIONS	src/kurtz/mm3src/maxmatopt.c	/^  OPTCOMPUTEBOTHDIRECTIONS,$/;"	e	enum:__anon5	file:
+OPTFOURCOLUMN	src/kurtz/mm3src/maxmatopt.c	/^  OPTFOURCOLUMN,$/;"	e	enum:__anon5	file:
+OPTH	src/kurtz/mm3src/maxmatopt.c	/^  OPTH,$/;"	e	enum:__anon5	file:
+OPTHELP	src/kurtz/mm3src/maxmatopt.c	/^  OPTHELP,$/;"	e	enum:__anon5	file:
+OPTLEASTLENGTH	src/kurtz/mm3src/maxmatopt.c	/^  OPTLEASTLENGTH,$/;"	e	enum:__anon5	file:
+OPTMATCHNUCLEOTIDESONLY	src/kurtz/mm3src/maxmatopt.c	/^  OPTMATCHNUCLEOTIDESONLY,$/;"	e	enum:__anon5	file:
+OPTMAXMATCH	src/kurtz/mm3src/maxmatopt.c	/^  OPTMAXMATCH,$/;"	e	enum:__anon5	file:
+OPTMUM	src/kurtz/mm3src/maxmatopt.c	/^  OPTMUM = 0,$/;"	e	enum:__anon5	file:
+OPTMUMCAND	src/kurtz/mm3src/maxmatopt.c	/^  OPTMUMCAND,$/;"	e	enum:__anon5	file:
+OPTMUMREF	src/kurtz/mm3src/maxmatopt.c	/^  OPTMUMREF,$/;"	e	enum:__anon5	file:
+OPTONLYREVERSECOMPLEMENT	src/kurtz/mm3src/maxmatopt.c	/^  OPTONLYREVERSECOMPLEMENT,$/;"	e	enum:__anon5	file:
+OPTSHOWREVERSEPOSITIONS	src/kurtz/mm3src/maxmatopt.c	/^  OPTSHOWREVERSEPOSITIONS,$/;"	e	enum:__anon5	file:
+OPTSHOWSEQUENCELENGTHS	src/kurtz/mm3src/maxmatopt.c	/^  OPTSHOWSEQUENCELENGTHS,$/;"	e	enum:__anon5	file:
+OPTSHOWSTRING	src/kurtz/mm3src/maxmatopt.c	/^  OPTSHOWSTRING,$/;"	e	enum:__anon5	file:
+Optionnumber	src/kurtz/mm3src/maxmatopt.c	/^} Optionnumber;$/;"	t	typeref:enum:__anon5	file:
+PROCESSREALMUMS	src/kurtz/mm3src/procmaxmat.c	121;"	d	file:
+Processmatchfunction	src/kurtz/mm3src/maxmatdef.h	/^typedef Sint (*Processmatchfunction)$/;"	t
+Q	src/kurtz/mm3src/findmumcand.c	/^   long int  R, Q, Len, Seq;$/;"	m	struct:__anon3	file:	access:public
+R	src/kurtz/mm3src/findmumcand.c	/^   long int  R, Q, Len, Seq;$/;"	m	struct:__anon3	file:	access:public
+SHOWBOOLEANVALUE	src/kurtz/mm3src/maxmat3.c	26;"	d	file:
+SPLINTALL	src/kurtz/mm3src/Makefile	/^SPLINTALL=maxmat3.splint maxmatopt.splint maxmatinp.splint\\$/;"	m
+SPLINTFLAGS	src/kurtz/mm3src/Makefile	/^SPLINTFLAGS=${INCLUDEDIR} -f ..\/Splintoptions -DDEBUG$/;"	m
+STORESTARTDESC	src/kurtz/mm3src/maxmatinp.c	37;"	d	file:
+Safe_malloc	src/kurtz/mm3src/findmumcand.c	/^void *  Safe_malloc  (size_t Len)$/;"	f	signature:(size_t Len)
+Safe_realloc	src/kurtz/mm3src/findmumcand.c	/^void *  Safe_realloc  (void * Q, size_t Len)$/;"	f	signature:(void * Q, size_t Len)
+Seq	src/kurtz/mm3src/findmumcand.c	/^   long int  R, Q, Len, Seq;$/;"	m	struct:__anon3	file:	access:public
+Tentative	src/kurtz/mm3src/findmumcand.c	/^   unsigned int  Tentative : 1;$/;"	m	struct:__anon3	file:	access:public
+VPATH	src/kurtz/mm3src/Makefile	/^VPATH := $(BIN_DIR)$/;"	m
+checkiflocationisMUMcand	src/kurtz/mm3src/findmumcand.c	/^static Sint checkiflocationisMUMcand (Location *loc,$/;"	f	file:	signature:(Location *loc, Uchar *subjectseq, Uchar *querysuffix, Uchar *query, Uint seqnum, Match_t *A, Uint *Size, Uint *N)
+checkquerycommonprefix	src/kurtz/mm3src/findmaxmat.c	/^static void checkquerycommonprefix(Maxmatchinfo *maxmatchinfo,$/;"	f	file:	signature:(Maxmatchinfo *maxmatchinfo, Bref nodeptr, Uint computeddepth)
+chunks	src/kurtz/mm3src/maxmatdef.h	/^       chunks,                  \/\/ number of chunks to split query sequence$/;"	m	struct:__anon4	access:public
+chunks	src/kurtz/mm3src/procmaxmat.c	/^       chunks,                 \/\/ number of chunks to split query$/;"	m	struct:__anon6	file:	access:public
+cmaxmatch	src/kurtz/mm3src/maxmatdef.h	/^       cmaxmatch,               \/\/ compute all maximal matches$/;"	m	struct:__anon4	access:public
+cmum	src/kurtz/mm3src/maxmatdef.h	/^       cmum;                    \/\/ compute real matches unique in both sequences$/;"	m	struct:__anon4	access:public
+cmum	src/kurtz/mm3src/procmaxmat.c	/^       cmum,                   \/\/ compute MUMs$/;"	m	struct:__anon6	file:	access:public
+cmumcand	src/kurtz/mm3src/maxmatdef.h	/^       cmumcand,                \/\/ compute reference-unique maximal matches$/;"	m	struct:__anon4	access:public
+cmumcand	src/kurtz/mm3src/procmaxmat.c	/^       cmumcand,               \/\/ compute MUM candidates$/;"	m	struct:__anon6	file:	access:public
+commondepthstack	src/kurtz/mm3src/findmaxmat.c	/^  ArrayNodeinfo commondepthstack; \/\/ stack to store depth values$/;"	m	struct:__anon2	file:	access:public
+currentisrcmatch	src/kurtz/mm3src/procmaxmat.c	/^       currentisrcmatch;       \/\/ true iff currently rc-matches are computed$/;"	m	struct:__anon6	file:	access:public
+currentquerylen	src/kurtz/mm3src/procmaxmat.c	/^       currentquerylen;        \/\/ length of the current query sequence$/;"	m	struct:__anon6	file:	access:public
+depthofpreviousmaxloc	src/kurtz/mm3src/findmaxmat.c	/^       depthofpreviousmaxloc;     \/\/ the depth of the previous maxloc$/;"	m	struct:__anon2	file:	access:public
+enumeratemaxmatches	src/kurtz/mm3src/findmaxmat.c	/^static Sint enumeratemaxmatches (Maxmatchinfo *maxmatchinfo,$/;"	f	file:	signature:(Maxmatchinfo *maxmatchinfo, Location *ploc)
+findmaxmatches	src/kurtz/mm3src/findmaxmat.c	/^Sint findmaxmatches(Suffixtree *stree,$/;"	f	signature:(Suffixtree *stree, Uint minmatchlength, Processmatchfunction processmatch, void *processinfo, Uchar *query, Uint querylen, Uint queryseqnum)
+findmaxmatches	src/kurtz/mm3src/procmaxmat.c	/^Sint findmaxmatches(Suffixtree *stree,$/;"	p	file:	signature:(Suffixtree *stree, Uint minmatchlength, Uint chunks, Processmatchfunction processmatch, void *processinfo, Uchar *query, Uint querylen, Uint seqnum)
+findmaxmatchesonbothstrands	src/kurtz/mm3src/procmaxmat.c	/^static Sint findmaxmatchesonbothstrands(void *info,Uint seqnum,$/;"	f	file:	signature:(void *info,Uint seqnum, Uchar *query,Uint querylen)
+findmumcandidates	src/kurtz/mm3src/findmumcand.c	/^Sint findmumcandidates(Suffixtree *stree,$/;"	f	signature:(Suffixtree *stree, Uint minmatchlength, Uint chunks, Processmatchfunction processmumcandidate, void *processinfo, Uchar *query, Uint querylen, Uint seqnum)
+findmumcandidates	src/kurtz/mm3src/procmaxmat.c	/^Sint findmumcandidates(Suffixtree *stree,$/;"	p	file:	signature:(Suffixtree *stree, Uint minmatchlength, Uint chunks, Processmatchfunction processmatch, void *processinfo, Uchar *query, Uint querylen, Uint seqnum)
+forward	src/kurtz/mm3src/maxmatdef.h	/^       forward,                 \/\/ compute matches on forward strand$/;"	m	struct:__anon4	access:public
+forward	src/kurtz/mm3src/procmaxmat.c	/^       forward,                \/\/ compute forward matches$/;"	m	struct:__anon6	file:	access:public
+fourcolumn	src/kurtz/mm3src/maxmatdef.h	/^       fourcolumn,              \/\/ always use 4 column format$/;"	m	struct:__anon4	access:public
+fourcolumn	src/kurtz/mm3src/procmaxmat.c	/^       fourcolumn,             \/\/ is option \\texttt{-F} on?$/;"	m	struct:__anon6	file:	access:public
+getmaxdesclen	src/kurtz/mm3src/procmaxmat.c	/^static Sint getmaxdesclen(Multiseq *multiseq)$/;"	f	file:	signature:(Multiseq *multiseq)
+getmaxmatinput	src/kurtz/mm3src/maxmat3.c	/^Sint getmaxmatinput (Multiseq *subjectmultiseq,$/;"	p	file:	signature:(Multiseq *subjectmultiseq, BOOL matchnucleotidesonly, char *subjectfile)
+getmaxmatinput	src/kurtz/mm3src/maxmatinp.c	/^Sint getmaxmatinput (Multiseq *subjectmultiseq,$/;"	f	signature:(Multiseq *subjectmultiseq, BOOL matchnucleotidesonly, char *subjectfile)
+inheritfrompath	src/kurtz/mm3src/findmaxmat.c	/^static void inheritfrompath(ArrayPathinfo *matchpath,Location *maxloc,$/;"	f	file:	signature:(ArrayPathinfo *matchpath,Location *maxloc, Nodeinfo *stacktop,Bref nodeptr, Uint accessindex, Uint inheritdepth)
+lcp	src/kurtz/mm3src/findmaxmat.c	/^static Uint lcp(Uchar *start1,Uchar *end1,Uchar *start2,Uchar *end2)$/;"	f	file:	signature:(Uchar *start1,Uchar *end1,Uchar *start2,Uchar *end2)
+makeleastlengthtext	src/kurtz/mm3src/maxmatopt.c	/^static void makeleastlengthtext(char *spacefortext)$/;"	f	file:	signature:(char *spacefortext)
+matchnucleotidesonly	src/kurtz/mm3src/maxmatdef.h	/^       matchnucleotidesonly,    \/\/ match ONLY acgt's$/;"	m	struct:__anon4	access:public
+matchpath	src/kurtz/mm3src/findmaxmat.c	/^  ArrayPathinfo matchpath;        \/\/ path of br. nodes from ploc to maxloc$/;"	m	struct:__anon2	file:	access:public
+maxdesclength	src/kurtz/mm3src/procmaxmat.c	/^       maxdesclength,          \/\/ maximum length of a description$/;"	m	struct:__anon6	file:	access:public
+maxloc	src/kurtz/mm3src/findmaxmat.c	/^  Location maxloc;                \/\/ location of \\texttt{pmax}$/;"	m	struct:__anon2	file:	access:public
+minmatchlength	src/kurtz/mm3src/findmaxmat.c	/^       minmatchlength,            \/\/ min length of a match to be reported$/;"	m	struct:__anon2	file:	access:public
+minmatchlength	src/kurtz/mm3src/maxmatdef.h	/^  Uint minmatchlength,          \/\/ minimal length of a match to be reported$/;"	m	struct:__anon4	access:public
+minmatchlength	src/kurtz/mm3src/procmaxmat.c	/^  Uint minmatchlength,         \/\/ minimum length of a match$/;"	m	struct:__anon6	file:	access:public
+mumcandtab	src/kurtz/mm3src/procmaxmat.c	/^  ArrayMUMcandidate mumcandtab;\/\/ a table containing MUM-candidates$/;"	m	struct:__anon6	file:	access:public
+numofqueryfiles	src/kurtz/mm3src/maxmatdef.h	/^       numofqueryfiles;         \/\/ number of query files$/;"	m	struct:__anon4	access:public
+onmaxpath	src/kurtz/mm3src/findmaxmat.c	/^  BOOL onmaxpath;$/;"	m	struct:__anon1	file:	access:public
+parsemaxmatoptions	src/kurtz/mm3src/maxmat3.c	/^Sint parsemaxmatoptions (MMcallinfo *maxmatcallinfo,$/;"	p	file:	signature:(MMcallinfo *maxmatcallinfo, Argctype argc, char **argv)
+parsemaxmatoptions	src/kurtz/mm3src/maxmatopt.c	/^Sint parsemaxmatoptions(MMcallinfo *mmcallinfo,Argctype argc, char **argv)$/;"	f	signature:(MMcallinfo *mmcallinfo,Argctype argc, char **argv)
+processbranch1	src/kurtz/mm3src/findmaxmat.c	/^static BOOL processbranch1(Bref nodeptr,void *info)$/;"	f	file:	signature:(Bref nodeptr,void *info)
+processbranch2	src/kurtz/mm3src/findmaxmat.c	/^static Sint processbranch2(\/*@unused@*\/ Bref nodeptr,void *info)$/;"	f	file:	signature:( Bref nodeptr,void *info)
+processinfo	src/kurtz/mm3src/findmaxmat.c	/^  void *processinfo;            \/\/ first arg. when calling previous function$/;"	m	struct:__anon2	file:	access:public
+processleaf	src/kurtz/mm3src/findmaxmat.c	/^static Sint processleaf(Uint leafindex,\/*@unused@*\/ Bref lcpnode,void *info)$/;"	f	file:	signature:(Uint leafindex, Bref lcpnode,void *info)
+processmatch	src/kurtz/mm3src/findmaxmat.c	/^  Processmatchfunction processmatch; \/\/ this function processes found match$/;"	m	struct:__anon2	file:	access:public
+procmaxmatches	src/kurtz/mm3src/maxmat3.c	/^Sint procmaxmatches(MMcallinfo *mmcallinfo,$/;"	p	file:	signature:(MMcallinfo *mmcallinfo, Multiseq *subjectmultiseq)
+procmaxmatches	src/kurtz/mm3src/procmaxmat.c	/^Sint procmaxmatches(MMcallinfo *mmcallinfo,Multiseq *subjectmultiseq)$/;"	f	signature:(MMcallinfo *mmcallinfo,Multiseq *subjectmultiseq)
+program	src/kurtz/mm3src/maxmatdef.h	/^  char program[PATH_MAX+1],     \/\/ the path of the program$/;"	m	struct:__anon4	access:public
+query	src/kurtz/mm3src/findmaxmat.c	/^  Uchar *query,                   \/\/ the query string$/;"	m	struct:__anon2	file:	access:public
+querycommondepth	src/kurtz/mm3src/findmaxmat.c	/^  Uint querycommondepth;$/;"	m	struct:__anon1	file:	access:public
+queryfilelist	src/kurtz/mm3src/maxmatdef.h	/^       queryfilelist[MAXNUMOFQUERYFILES][PATH_MAX+1]; $/;"	m	struct:__anon4	access:public
+querylen	src/kurtz/mm3src/findmaxmat.c	/^  Uint querylen,                  \/\/ length of the current query$/;"	m	struct:__anon2	file:	access:public
+querymultiseq	src/kurtz/mm3src/procmaxmat.c	/^           querymultiseq;      \/\/ the Multiseq record of the queries$/;"	m	struct:__anon6	file:	access:public
+queryseqnum	src/kurtz/mm3src/findmaxmat.c	/^       queryseqnum,               \/\/ number of query sequence$/;"	m	struct:__anon2	file:	access:public
+querysuffix	src/kurtz/mm3src/findmaxmat.c	/^        *querysuffix;             \/\/ current suffix of query$/;"	m	struct:__anon2	file:	access:public
+reversecomplement	src/kurtz/mm3src/maxmatdef.h	/^       reversecomplement,       \/\/ compute matches on reverse strand$/;"	m	struct:__anon4	access:public
+reversecomplement	src/kurtz/mm3src/procmaxmat.c	/^       reversecomplement,      \/\/ compute reverse complement matches$/;"	m	struct:__anon6	file:	access:public
+scanmultiplefastafile	src/kurtz/mm3src/maxmatinp.c	/^Sint scanmultiplefastafile (Multiseq *multiseq,$/;"	f	signature:(Multiseq *multiseq, char *filename, Uchar replacewildcardchar, Uchar *input, Uint inputlen)
+scanmultiplefastafile	src/kurtz/mm3src/procmaxmat.c	/^Sint scanmultiplefastafile (Multiseq *multiseq,$/;"	p	file:	signature:(Multiseq *multiseq, char *filename, Uchar replacewildcardchar, Uchar *input, Uint inputlen)
+showgreedymatchresult	src/kurtz/mm3src/findmaxmat.c	/^static void showgreedymatchresult(Maxmatchinfo *maxmatchinfo,$/;"	f	file:	signature:(Maxmatchinfo *maxmatchinfo, Location *ploc)
+showmaximalmatch	src/kurtz/mm3src/procmaxmat.c	/^static Sint showmaximalmatch (void *info,$/;"	f	file:	signature:(void *info, Uint matchlength, Uint subjectstart, Uint seqnum, Uint querystart)
+showmaxmatflags	src/kurtz/mm3src/maxmat3.c	/^static void showmaxmatflags (char *program,$/;"	f	file:	signature:(char *program, MMcallinfo *mmcallinfo)
+showreversepositions	src/kurtz/mm3src/maxmatdef.h	/^       showreversepositions,    \/\/ give reverse pos. rel. to orig. string$/;"	m	struct:__anon4	access:public
+showreversepositions	src/kurtz/mm3src/procmaxmat.c	/^       showreversepositions,   \/\/ is option \\texttt{-c} on?$/;"	m	struct:__anon6	file:	access:public
+showseqandmaximalmatch	src/kurtz/mm3src/procmaxmat.c	/^static Sint showseqandmaximalmatch (void *info,$/;"	f	file:	signature:(void *info, Uint matchlength, Uint subjectstart, Uint seqnum, Uint querystart)
+showsequencedescription	src/kurtz/mm3src/procmaxmat.c	/^static void showsequencedescription(Multiseq *multiseq, Uint maxdesclength,$/;"	f	file:	signature:(Multiseq *multiseq, Uint maxdesclength, Uint seqnum)
+showsequenceheader	src/kurtz/mm3src/procmaxmat.c	/^static void showsequenceheader(Multiseq *multiseq,$/;"	f	file:	signature:(Multiseq *multiseq, BOOL showsequencelengths, BOOL currentisrcmatch, Uint seqnum, Uint seqlen)
+showsequencelengths	src/kurtz/mm3src/maxmatdef.h	/^       showsequencelengths,     \/\/ show length of sequences on header line$/;"	m	struct:__anon4	access:public
+showsequencelengths	src/kurtz/mm3src/procmaxmat.c	/^       showsequencelengths,    \/\/ is option \\texttt{-L} on?$/;"	m	struct:__anon6	file:	access:public
+showstring	src/kurtz/mm3src/maxmatdef.h	/^  BOOL showstring,              \/\/ show the matching string$/;"	m	struct:__anon4	access:public
+showstring	src/kurtz/mm3src/procmaxmat.c	/^  BOOL showstring,             \/\/ is option \\texttt{-s} on?$/;"	m	struct:__anon6	file:	access:public
+showusage	src/kurtz/mm3src/maxmatopt.c	/^static void showusage(char *program,OptionDescription *options,$/;"	f	file:	signature:(char *program,OptionDescription *options, Uint numofoptions)
+storeMUMcandidate	src/kurtz/mm3src/procmaxmat.c	/^static Sint storeMUMcandidate (void *info,$/;"	f	file:	signature:(void *info, Uint matchlength, Uint subjectstart, Uint seqnum, Uint querystart)
+stree	src/kurtz/mm3src/findmaxmat.c	/^  Suffixtree *stree;              \/\/ reference to suffix tree of subject-seq$/;"	m	struct:__anon2	file:	access:public
+stree	src/kurtz/mm3src/procmaxmat.c	/^  Suffixtree stree;            \/\/ the suffix tree of the subject-sequence$/;"	m	struct:__anon6	file:	access:public
+subjectfile	src/kurtz/mm3src/maxmatdef.h	/^       subjectfile[PATH_MAX+1], \/\/ filename of the subject-sequence$/;"	m	struct:__anon4	access:public
+subjectmultiseq	src/kurtz/mm3src/procmaxmat.c	/^  Multiseq *subjectmultiseq,   \/\/ reference to multiseq of subject$/;"	m	struct:__anon6	file:	access:public
+wccSequence	src/kurtz/mm3src/procmaxmat.c	/^static void wccSequence (Uchar *seq,$/;"	f	file:	signature:(Uchar *seq, Uint seqlen)

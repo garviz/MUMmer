@@ -63,6 +63,7 @@ static Uint lcp(SYMBOL *start1,SYMBOL *end1,SYMBOL *start2,SYMBOL *end2)
   {
     if(lptr > right)   // check for empty word
     {
+      fprintf(stderr,"Stop empty word\n");
       return NULL;
     }
     firstchar = *lptr;
@@ -95,6 +96,7 @@ static Uint lcp(SYMBOL *start1,SYMBOL *end1,SYMBOL *start2,SYMBOL *end2)
         loc->locstring.length = prefixlen;
         if(prefixlen == (Uint) (right - lptr + 1))
         {
+      fprintf(stderr,"Stop %d\n",__LINE__);
           return NULL;
         }
         return lptr + prefixlen;
@@ -146,6 +148,7 @@ static Uint lcp(SYMBOL *start1,SYMBOL *end1,SYMBOL *start2,SYMBOL *end2)
             loc->locstring.length = nodedepth + prefixlen;
             if(prefixlen == (Uint) (right - lptr + 1))
             {
+      fprintf(stderr,"Stop %d\n",__LINE__);
               return NULL;
             }
             return lptr + prefixlen;
@@ -209,6 +212,7 @@ static Uint lcp(SYMBOL *start1,SYMBOL *end1,SYMBOL *start2,SYMBOL *end2)
       loc->remain = loc->edgelen - prefixlen;
       if(prefixlen == (Uint) (right - lptr + 1))
       {
+      fprintf(stderr,"Stop %d\n",__LINE__);
         return NULL;
       }
       return lptr + prefixlen;
@@ -294,6 +298,7 @@ static Uint lcp(SYMBOL *start1,SYMBOL *end1,SYMBOL *start2,SYMBOL *end2)
     outloc->locstring.length = inloc->locstring.length + prefixlen;
     return left + prefixlen;
   }
+  fprintf(stderr,"End of function scanprefixfromnodestree\n");
   return scanprefixfromnodestree(stree,outloc,inloc->nextnode.address,
                                    left+prefixlen,right,rescanlength);
 }

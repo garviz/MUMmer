@@ -134,8 +134,8 @@ static Sint checkiflocationisMUMcand (Location *loc,
 			       || *(querysuffix - 1) != 
                                   subjectseq[loc->locstring.start - 1]))
   {
-      //fprintf(stdout,"%lu,%lu,%lu\n",loc->locstring.start,(Uint) (querysuffix-query),loc->locstring.length);
-      if (*N >= *Size -1)
+      fprintf(stdout,"%lu,%lu,%lu\n",loc->locstring.start,(Uint) (querysuffix-query),loc->locstring.length);
+      /*if (*N >= *Size -1)
       {
           *Size = *Size * 2;
           A = (Match_t *) Safe_realloc (A, *Size * sizeof (Match_t));
@@ -145,7 +145,7 @@ static Sint checkiflocationisMUMcand (Location *loc,
       A[*N].Len = loc->locstring.length;
       A[*N].Seq = seqnum;
       fprintf(stderr,"%lu %lu %lu %lu %lu\n", (*N), A[(*N)].R, A[(*N)].Q, A[(*N)].Len, A[(*N)].Seq);*/
-      (*N)++;
+      //(*N)++;
   }
   return 0;
 }
@@ -207,7 +207,7 @@ Sint findmumcandidates(Suffixtree *stree,
   start = omp_get_wtime();
 #pragma omp parallel default(none) private(i,left,right,lptr,querysuffix,loc,N,A,Size,processmumcandidate,processinfo) shared(stdout,chunks,query,querylen,stree,minmatchlength,seqnum,nthreads)
   { 
-      likwid_markerStartRegion("Find MUMs");
+      //likwid_markerStartRegion("Find MUMs");
       nthreads = omp_get_num_threads();
       A = (Match_t *) Safe_malloc (Size * sizeof (Match_t));
       Size = 32768;
@@ -215,49 +215,50 @@ Sint findmumcandidates(Suffixtree *stree,
 #pragma omp for schedule(runtime) nowait
       for (i=0;i<chunks;i++)
       { 
-          left = query + (Uint)(querylen/chunks*i);
-          right = query + (Uint)(querylen/chunks*(i+1))-1;
-          likwid_markerStartRegion("ROOT");
+          left = query + querylen/chunks*i;
+          right = query + querylen/chunks*(i+1)-1;
+          //likwid_markerStartRegion("ROOT");
           lptr = scanprefixfromnodestree (stree, &loc, ROOT (stree), 
-                                  query, right, 0);
-          likwid_markerStopRegion("ROOT");
-          for (querysuffix = query; querysuffix<right && lptr != NULL; querysuffix++)
-           {
+                                  left, right, 0);
+          //likwid_markerStopRegion("ROOT");
+          for (querysuffix = left; lptr != NULL; querysuffix++)
+          {
+              fprintf(stdout,"%p %p\n", querysuffix, lptr);
               DEBUGCODE(2,showlocation(stdout,stree,&loc));
-              likwid_markerStartRegion("MUM");
+              //likwid_markerStartRegion("MUM");
               if (loc.locstring.length >= minmatchlength)
                   checkiflocationisMUMcand(&loc,stree->text, querysuffix, query, seqnum, A, &Size, &N);
-              likwid_markerStopRegion("MUM");
+              //likwid_markerStopRegion("MUM");
               if (ROOTLOCATION (&loc))
               {
-                  likwid_markerStartRegion("ROOT");
+                  //likwid_markerStartRegion("ROOT");
                   lptr = scanprefixfromnodestree (stree, &loc, ROOT (stree), 
                                       lptr + 1, right, 0);
-                  likwid_markerStopRegion("ROOT");
+                  //likwid_markerStopRegion("ROOT");
               }
               else
-               { 
-                  likwid_markerStartRegion("SL");
+              { 
+                  //likwid_markerStartRegion("SL");
                   linklocstree (stree, &loc, &loc);
                   lptr = scanprefixstree (stree, &loc, &loc, lptr, right, 0);
-                  likwid_markerStopRegion("SL");
+                  //likwid_markerStopRegion("SL");
               }
           }
           DEBUGCODE(2,showlocation(stdout,stree,&loc));
           while (!ROOTLOCATION (&loc) && loc.locstring.length >= minmatchlength)
           { 
-              likwid_markerStartRegion("MUM");
+              //likwid_markerStartRegion("MUM");
               if (loc.locstring.length >= minmatchlength)
                   checkiflocationisMUMcand(&loc,stree->text, querysuffix, query, seqnum, A, &Size, &N);
-              likwid_markerStopRegion("MUM");
-              likwid_markerStartRegion("SL");
+              //likwid_markerStopRegion("MUM");
+              //likwid_markerStartRegion("SL");
               linklocstree (stree, &loc, &loc);
-              likwid_markerStopRegion("SL");
+              //likwid_markerStopRegion("SL");
               querysuffix++;
               DEBUGCODE(2,showlocation(stdout,stree,&loc));
           }
       }
-      likwid_markerStopRegion("Find MUMs");
+      //likwid_markerStopRegion("Find MUMs");
       //fprintf(stdout,"Matches=%lu,Size=%lu,",N,Size);
   }
   end = omp_get_wtime();

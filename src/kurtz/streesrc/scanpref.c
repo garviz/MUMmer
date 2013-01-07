@@ -26,14 +26,14 @@ static Uint lcp(SYMBOL *start1,SYMBOL *end1,SYMBOL *start2,SYMBOL *end2)
   return (Uint) (ptr1-start1);
 }
 
-/*@null@*/ SYMBOL *scanprefixfromnodestree(Suffixtree *stree,Location *loc,
+/*@null@*/ Uint scanprefixfromnodestree(Suffixtree *stree,Location *loc,
                                            Bref btptr,SYMBOL *left,
                                            SYMBOL *right,Uint rescanlength)
 {
   Uint *nodeptr = NULL, *largeptr = NULL, leafindex, nodedepth, 
        node, distance = 0, prefixlen, headposition, tmpnodedepth,
        edgelen, remainingtoskip;
-  SYMBOL *lptr, *leftborder = (SYMBOL *) NULL, firstchar, edgechar = 0;
+  SYMBOL *leftborder = (SYMBOL *) NULL, firstchar, edgechar = 0, *lptr = (SYMBOL *) NULL, otro;
 
   DEBUG1(4,"scanprefixfromnodestree starts at node %lu\n",
           (Showuint) BRADDR2NUM(stree,btptr));
@@ -61,29 +61,28 @@ static Uint lcp(SYMBOL *start1,SYMBOL *end1,SYMBOL *start2,SYMBOL *end2)
   }
   while(True)
   {
-    if(lptr > right)   // check for empty word
+    if(left > right)   // check for empty word
     {
-      fprintf(stderr,"Stop empty word\n");
-      return NULL;
+      return -2;
     }
     firstchar = *lptr;
     if(nodeptr == stree->branchtab)  // at the root
     {
       if((node = stree->rootchildren[(Uint) firstchar]) == UNDEFINEDREFERENCE)
       {
-        return lptr;
+        return -1;
       }
       if(ISLEAF(node))
-      {
+      { 
         leafindex = GETLEAFINDEX(node);
         loc->firstptr = stree->text + leafindex;
         if(remainingtoskip > 0)
-        {
+         {
           prefixlen = remainingtoskip + 
                       lcp(lptr+remainingtoskip,right,
                           loc->firstptr+remainingtoskip,stree->sentinel-1);
         } else
-        {
+        { 
           prefixlen = 1 + lcp(lptr+1,right,
                               loc->firstptr+1,stree->sentinel-1);
         }
@@ -95,11 +94,10 @@ static Uint lcp(SYMBOL *start1,SYMBOL *end1,SYMBOL *start2,SYMBOL *end2)
         loc->locstring.start = leafindex;
         loc->locstring.length = prefixlen;
         if(prefixlen == (Uint) (right - lptr + 1))
-        {
-      fprintf(stderr,"Stop %d\n",__LINE__);
-          return NULL;
+        { 
+          return -2;
         }
-        return lptr + prefixlen;
+        return prefixlen;
       } 
       nodeptr = stree->branchtab + GETBRANCHINDEX(node);
       GETONLYHEADPOS(headposition,nodeptr);
@@ -110,31 +108,31 @@ static Uint lcp(SYMBOL *start1,SYMBOL *end1,SYMBOL *start2,SYMBOL *end2)
       while(True)
       {
         if(NILPTR(node))
-        {
-          return lptr;
+        { 
+          return -1;
         }
         if(ISLEAF(node))
         {
           leafindex = GETLEAFINDEX(node);
           leftborder = stree->text + (nodedepth + leafindex);
           if(leftborder == stree->sentinel)
-          {
-            return lptr;
+          { 
+            return -1;
           }
           edgechar = *leftborder;
           if(edgechar > firstchar)
-          {
-            return lptr;
+          { 
+            return -1;
           }
           if(edgechar == firstchar)
           {
             if(remainingtoskip > 0)
-            {
+            { 
               prefixlen = remainingtoskip +
                           lcp(lptr+remainingtoskip,right,
                               leftborder+remainingtoskip,stree->sentinel-1);
             } else
-            {
+            { 
               prefixlen = 1 + lcp(lptr+1,right,
                                   leftborder+1,stree->sentinel-1);
             }
@@ -148,10 +146,10 @@ static Uint lcp(SYMBOL *start1,SYMBOL *end1,SYMBOL *start2,SYMBOL *end2)
             loc->locstring.length = nodedepth + prefixlen;
             if(prefixlen == (Uint) (right - lptr + 1))
             {
-      fprintf(stderr,"Stop %d\n",__LINE__);
-              return NULL;
+              return -2;
             }
-            return lptr + prefixlen;
+            lptr += prefixlen;
+            return prefixlen;
           }
           node = LEAFBROTHERVAL(stree->leaftab[leafindex]);
         } else
@@ -162,7 +160,7 @@ static Uint lcp(SYMBOL *start1,SYMBOL *end1,SYMBOL *start2,SYMBOL *end2)
           edgechar = *leftborder;
           if (edgechar > firstchar)
           {
-            return lptr;
+            return -1;
           }
           if(edgechar == firstchar)
           {
@@ -212,15 +210,15 @@ static Uint lcp(SYMBOL *start1,SYMBOL *end1,SYMBOL *start2,SYMBOL *end2)
       loc->remain = loc->edgelen - prefixlen;
       if(prefixlen == (Uint) (right - lptr + 1))
       {
-      fprintf(stderr,"Stop %d\n",__LINE__);
-        return NULL;
+        return -2;
       }
-      return lptr + prefixlen;
+      lptr +=  prefixlen;
+      return prefixlen;
     }
   }
 }
 
-/*@null@*/ SYMBOL *scanprefixstree(Suffixtree *stree,Location *outloc,
+/*@null@*/ Uint scanprefixstree(Suffixtree *stree,Location *outloc,
                                    Location *inloc,SYMBOL *left,
                                    SYMBOL *right,Uint rescanlength)
 {
@@ -265,7 +263,7 @@ static Uint lcp(SYMBOL *start1,SYMBOL *end1,SYMBOL *start2,SYMBOL *end2)
     outloc->nextnode.address = inloc->nextnode.address;
     outloc->locstring.start = LEAFADDR2NUM(stree,inloc->nextnode.address);
     outloc->locstring.length = inloc->locstring.length + prefixlen;
-    return left + prefixlen;
+    return prefixlen;
   }
   if(remainingtoskip > 0)
   {
@@ -296,9 +294,8 @@ static Uint lcp(SYMBOL *start1,SYMBOL *end1,SYMBOL *start2,SYMBOL *end2)
     outloc->nextnode.address = inloc->nextnode.address;
     outloc->locstring.start = inloc->locstring.start;
     outloc->locstring.length = inloc->locstring.length + prefixlen;
-    return left + prefixlen;
+    return prefixlen;
   }
-  fprintf(stderr,"End of function scanprefixfromnodestree\n");
   return scanprefixfromnodestree(stree,outloc,inloc->nextnode.address,
                                    left+prefixlen,right,rescanlength);
 }
